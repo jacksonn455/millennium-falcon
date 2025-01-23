@@ -1,0 +1,37 @@
+{
+  "files": {
+    "main.css": "/millennium-falcon/static/css/main.a0976fbc.css",
+    "main.js": "/millennium-falcon/static/js/main.165a2ca9.js",
+    "static/js/453.43c721aa.chunk.js": "/millennium-falcon/static/js/453.43c721aa.chunk.js",
+    "static/media/caroline.jpg": "/millennium-falcon/static/media/caroline.1af5a6609e129781aff1.jpg",
+    "static/media/nagila.jpeg": "/millennium-falcon/static/media/nagila.a9459c68c46ffa227016.jpeg",
+    "static/media/rosane.jpg": "/millennium-falcon/static/media/rosane.ec83495bf90dc4f14da4.jpg",
+    "static/media/jackson.jpeg": "/millennium-falcon/static/media/jackson.3724737840f04c13e023.jpeg",
+    "static/media/maria.jpg": "/millennium-falcon/static/media/maria.c77d82b0a5fe75ee1345.jpg",
+    "static/media/playwrite-in-latin-400-normal.woff": "/millennium-falcon/static/media/playwrite-in-latin-400-normal.7580fcf41307b7b8eee9.woff",
+    "static/media/playwrite-in-latin-400-normal.woff2": "/millennium-falcon/static/media/playwrite-in-latin-400-normal.fb76c78a3828901f3c51.woff2",
+    "static/media/logo.png": "/millennium-falcon/static/media/logo.09dac5d6381269f40fe7.png",
+    "static/media/pacifico-latin-400-normal.woff2": "/millennium-falcon/static/media/pacifico-latin-400-normal.f36bb0347eecd87d78af.woff2",
+    "static/media/pacifico-latin-ext-400-normal.woff2": "/millennium-falcon/static/media/pacifico-latin-ext-400-normal.e12a2413eb43b100497c.woff2",
+    "static/media/pacifico-cyrillic-ext-400-normal.woff2": "/millennium-falcon/static/media/pacifico-cyrillic-ext-400-normal.682f9fb5d72ef074686d.woff2",
+    "static/media/pacifico-latin-400-normal.woff": "/millennium-falcon/static/media/pacifico-latin-400-normal.14d6c552098c08b689a8.woff",
+    "static/media/pacifico-latin-ext-400-normal.woff": "/millennium-falcon/static/media/pacifico-latin-ext-400-normal.a23c1ef38ba6c6d9d725.woff",
+    "static/media/pacifico-cyrillic-400-normal.woff2": "/millennium-falcon/static/media/pacifico-cyrillic-400-normal.12b0288f7a1df3155d42.woff2",
+    "static/media/pacifico-cyrillic-ext-400-normal.woff": "/millennium-falcon/static/media/pacifico-cyrillic-ext-400-normal.846fa4697d95af9f681d.woff",
+    "static/media/estatistica.png": "/millennium-falcon/static/media/estatistica.e608cff2246f7879460d.png",
+    "static/media/pacifico-cyrillic-400-normal.woff": "/millennium-falcon/static/media/pacifico-cyrillic-400-normal.62a6feffdc768e3f6e65.woff",
+    "static/media/pacifico-vietnamese-400-normal.woff2": "/millennium-falcon/static/media/pacifico-vietnamese-400-normal.bd5387ce81f7c383a0a3.woff2",
+    "static/media/pacifico-vietnamese-400-normal.woff": "/millennium-falcon/static/media/pacifico-vietnamese-400-normal.e0ad65c3d90312b0416e.woff",
+    "static/media/contact.svg": "/millennium-falcon/static/media/contact.2e66e3f74b03af9f458a327b1879373a.svg",
+    "static/media/list.svg": "/millennium-falcon/static/media/list.8a58601f5a63652311603637c392cfee.svg",
+    "index.html": "/millennium-falcon/index.html",
+    "static/media/box-solid.svg": "/millennium-falcon/static/media/box-solid.2010fc76d8b5e1afcaaa94adca3a7945.svg",
+    "main.a0976fbc.css.map": "/millennium-falcon/static/css/main.a0976fbc.css.map",
+    "main.165a2ca9.js.map": "/millennium-falcon/static/js/main.165a2ca9.js.map",
+    "453.43c721aa.chunk.js.map": "/millennium-falcon/static/js/453.43c721aa.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a0976fbc.css",
+    "static/js/main.165a2ca9.js"
+  ]
+}
