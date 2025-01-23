@@ -1,5 +1,4 @@
 # Sistema de Gestão para Clínica de Estética
-=======================================================
 
 Este repositório contém o código e os recursos de um sistema completo desenvolvido para uma clínica de estética. O objetivo principal é fornecer ferramentas eficientes para o gerenciamento de agendamentos, anamneses e produtos utilizados pelos pacientes.
 
