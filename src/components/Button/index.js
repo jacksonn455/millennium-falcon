@@ -30,4 +30,34 @@ const Button = styled.button`
   }
 `;
 
-export { ButtonGroup, Button };
+const ButtonHome = styled.button`
+  background-color: #a8235e;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  font-weight: 900;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 150px;
+  &:hover {
+    background-color: #8b1e4d;
+  }
+`;
+
+const ButtonEstatistica = styled.button`
+    background-color: #A8235E;
+    color: #FFF;
+    padding: 10px 0px;
+    font-size: 16px;
+    border: none;
+    font-weight: 900;
+    display: block;
+    text-align: center;
+    width: 150px;
+    &:hover {
+        cursor: pointer;
+    }
+`
+
+export { ButtonGroup, Button, ButtonHome, ButtonEstatistica };

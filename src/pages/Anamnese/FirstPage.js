@@ -55,6 +55,10 @@ const FirstPage = ({ nextPage }) => {
         <Label>Estado Civil:</Label>
         <AnamneseInput type="text" placeholder="Digite o estado civil" />
       </FormGroup>
+      <FormGroup>
+        <Label>Fotos da Paciente:</Label>
+        <AnamneseInput type="file" />
+      </FormGroup>
 
       <SectionTitle>Primeira Consulta</SectionTitle>
       <FormGroup>

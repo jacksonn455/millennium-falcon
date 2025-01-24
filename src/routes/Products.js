@@ -28,20 +28,19 @@ const ProductName = styled.h3`
 `;
 
 function Product() {
-  // Estado para o formulário de cadastro
   const [productName, setProductName] = useState("");
   const [category, setCategory] = useState("");
   const [quantity, setQuantity] = useState("");
   const [validity, setValidity] = useState("");
   const [price, setPrice] = useState("");
   const [supplier, setSupplier] = useState("");
+  const [composition, setComposition] = useState("");
+  const [image, setImage] = useState(null);
 
-  // Estado para lista de produtos cadastrados
   const [productList, setProductList] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Cria um novo produto e adiciona na lista
     const newProduct = {
       id: productList.length + 1,
       name: productName,
@@ -50,15 +49,18 @@ function Product() {
       validity,
       price,
       supplier,
+      composition,
+      image,
     };
     setProductList([...productList, newProduct]);
-    // Limpa os campos do formulário
     setProductName("");
     setCategory("");
     setQuantity("");
     setValidity("");
     setPrice("");
     setSupplier("");
+    setComposition("");
+    setImage(null);
   };
 
   return (
@@ -134,6 +136,25 @@ function Product() {
             />
           </div>
 
+          <div>
+            <Label>Composição:</Label>
+            <AnamneseInput
+              type="text"
+              value={composition}
+              onChange={(e) => setComposition(e.target.value)}
+              placeholder="Composição do produto"
+            />
+          </div>
+
+          <div>
+            <Label>Imagem do Produto:</Label>
+            <AnamneseInput
+              type="file"
+              onChange={(e) => setImage(URL.createObjectURL(e.target.files[0]))}
+              accept="image/*"
+            />
+          </div>
+
           <ButtonGroup>
             <Button type="submit">Cadastrar Produto</Button>
           </ButtonGroup>
@@ -149,6 +170,12 @@ function Product() {
               <p><strong>Validade:</strong> {product.validity}</p>
               <p><strong>Preço:</strong> R$ {product.price}</p>
               <p><strong>Fornecedor:</strong> {product.supplier}</p>
+              <p><strong>Composição:</strong> {product.composition}</p>
+              {product.image && (
+                <div>
+                  <img src={product.image} alt={product.name} width="100" height="100" />
+                </div>
+              )}
             </ProductCard>
           ))}
         </ProductList>

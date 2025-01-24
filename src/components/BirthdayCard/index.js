@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Title } from "../Title";
+import { ButtonHome } from "../Button";
 
 const Card = styled.div`
   align-items: center;
@@ -21,6 +22,7 @@ const BirthdayList = styled.div`
   padding: 0;
   margin: 20px 0;
   width: 100%;
+  margin-left: 40px;
 `;
 
 const BirthdayItem = styled.div`
@@ -53,23 +55,6 @@ const BirthdayDate = styled.span`
   color: #555;
 `;
 
-const Button = styled.button`
-  background-color: #a8235e;
-  color: #fff;
-  padding: 10px 0px;
-  font-size: 16px;
-  border: none;
-  font-weight: 900;
-  margin-top: 20px;
-  text-align: center;
-  width: 150px;
-  border-radius: 5px;
-
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
 function BirthdayCard({ title, birthdays }) {
   return (
     <Card>
@@ -88,7 +73,7 @@ function BirthdayCard({ title, birthdays }) {
           </BirthdayItem>
         ))}
       </BirthdayList>
-      <Button>Veja mais</Button>
+      <ButtonHome>Veja mais</ButtonHome>
     </Card>
   );
 }

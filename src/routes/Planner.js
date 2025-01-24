@@ -11,15 +11,45 @@ const AppContainer = styled.div`
   height: 100vh;
 `;
 
+const AppointmentList = styled.div`
+  margin-top: 20px;
+`;
+
+const AppointmentCard = styled.div`
+  background-color: #f9f9f9;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const AppointmentTitle = styled.h3`
+  margin: 0;
+`;
+
 function Planner() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [service, setService] = useState("");
   const [paciente, setPaciente] = useState("");
+  const [contact, setContact] = useState("");
+  const [notes, setNotes] = useState("");
+  const [responsible, setResponsible] = useState("");
+  const [status, setStatus] = useState("Pendente");
+  const [appointments, setAppointments] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Agendamento realizado:", { date, time, service });
+    const newAppointment = { date, time, paciente, service, contact, notes, responsible, status };
+    setAppointments([...appointments, newAppointment]);
+    setDate("");
+    setTime("");
+    setPaciente("");
+    setService("");
+    setContact("");
+    setNotes("");
+    setResponsible("");
+    setStatus("Pendente");
   };
 
   return (
@@ -61,6 +91,16 @@ function Planner() {
           </div>
 
           <div>
+            <Label>Telefone ou Contato do Paciente:</Label>
+            <AnamneseInput
+              type="text"
+              value={contact}
+              onChange={(e) => setContact(e.target.value)}
+              placeholder="Digite o telefone ou contato"
+            />
+          </div>
+
+          <div>
             <Label>Tipo de Serviço:</Label>
             <AnamneseInput
               type="text"
@@ -71,10 +111,56 @@ function Planner() {
             />
           </div>
 
+          <div>
+            <Label>Observações ou Notas:</Label>
+            <AnamneseInput
+              type="text"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Observações sobre o paciente ou procedimento"
+            />
+          </div>
+
+          <div>
+            <Label>Profissional Responsável:</Label>
+            <AnamneseInput
+              type="text"
+              value={responsible}
+              onChange={(e) => setResponsible(e.target.value)}
+              placeholder="Nome do profissional responsável"
+            />
+          </div>
+
+          <div>
+            <Label>Status do Agendamento:</Label>
+            <AnamneseInput
+              type="text"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              placeholder="Status do agendamento"
+            />
+          </div>
+
           <ButtonGroup>
             <Button type="submit">Agendar</Button>
           </ButtonGroup>
         </form>
+
+        <SectionTitle>Consultas Agendadas</SectionTitle>
+        <AppointmentList>
+          {appointments.map((appointment, index) => (
+            <AppointmentCard key={index}>
+              <AppointmentTitle>Consulta de {appointment.paciente}</AppointmentTitle>
+              <p><strong>Data:</strong> {appointment.date}</p>
+              <p><strong>Hora:</strong> {appointment.time}</p>
+              <p><strong>Tipo de Serviço:</strong> {appointment.service}</p>
+              <p><strong>Telefone/Contato:</strong> {appointment.contact}</p>
+              <p><strong>Observações:</strong> {appointment.notes}</p>
+              <p><strong>Profissional Responsável:</strong> {appointment.responsible}</p>
+              <p><strong>Status:</strong> {appointment.status}</p>
+            </AppointmentCard>
+          ))}
+        </AppointmentList>
       </Container>
     </AppContainer>
   );
