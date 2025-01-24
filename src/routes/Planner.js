@@ -15,6 +15,7 @@ function Planner() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [service, setService] = useState("");
+  const [paciente, setPaciente] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,6 +45,17 @@ function Planner() {
               type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <Label>Nome do Paciente:</Label>
+            <AnamneseInput
+              type="text"
+              value={paciente}
+              onChange={(e) => setPaciente(e.target.value)}
+              placeholder="Digite o nome do paciente"
               required
             />
           </div>

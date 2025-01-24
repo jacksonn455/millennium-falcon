@@ -33,7 +33,9 @@ function Product() {
   const [category, setCategory] = useState("");
   const [quantity, setQuantity] = useState("");
   const [validity, setValidity] = useState("");
-  
+  const [price, setPrice] = useState("");
+  const [supplier, setSupplier] = useState("");
+
   // Estado para lista de produtos cadastrados
   const [productList, setProductList] = useState([]);
 
@@ -46,6 +48,8 @@ function Product() {
       category,
       quantity,
       validity,
+      price,
+      supplier,
     };
     setProductList([...productList, newProduct]);
     // Limpa os campos do formulário
@@ -53,6 +57,8 @@ function Product() {
     setCategory("");
     setQuantity("");
     setValidity("");
+    setPrice("");
+    setSupplier("");
   };
 
   return (
@@ -105,6 +111,29 @@ function Product() {
             />
           </div>
 
+          <div>
+            <Label>Preço:</Label>
+            <AnamneseInput
+              type="number"
+              step="0.01"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="Preço do produto (R$)"
+              required
+            />
+          </div>
+
+          <div>
+            <Label>Fornecedor:</Label>
+            <AnamneseInput
+              type="text"
+              value={supplier}
+              onChange={(e) => setSupplier(e.target.value)}
+              placeholder="Fornecedor do produto"
+              required
+            />
+          </div>
+
           <ButtonGroup>
             <Button type="submit">Cadastrar Produto</Button>
           </ButtonGroup>
@@ -118,6 +147,8 @@ function Product() {
               <p><strong>Categoria:</strong> {product.category}</p>
               <p><strong>Quantidade:</strong> {product.quantity}</p>
               <p><strong>Validade:</strong> {product.validity}</p>
+              <p><strong>Preço:</strong> R$ {product.price}</p>
+              <p><strong>Fornecedor:</strong> {product.supplier}</p>
             </ProductCard>
           ))}
         </ProductList>
