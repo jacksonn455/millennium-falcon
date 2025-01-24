@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/millennium-falcon/static/css/main.a0976fbc.css",
-    "main.js": "/millennium-falcon/static/js/main.165a2ca9.js",
+    "main.js": "/millennium-falcon/static/js/main.e50af251.js",
     "static/js/453.43c721aa.chunk.js": "/millennium-falcon/static/js/453.43c721aa.chunk.js",
     "static/media/caroline.jpg": "/millennium-falcon/static/media/caroline.1af5a6609e129781aff1.jpg",
     "static/media/nagila.jpeg": "/millennium-falcon/static/media/nagila.a9459c68c46ffa227016.jpeg",
@@ -27,11 +27,11 @@
     "index.html": "/millennium-falcon/index.html",
     "static/media/box-solid.svg": "/millennium-falcon/static/media/box-solid.2010fc76d8b5e1afcaaa94adca3a7945.svg",
     "main.a0976fbc.css.map": "/millennium-falcon/static/css/main.a0976fbc.css.map",
-    "main.165a2ca9.js.map": "/millennium-falcon/static/js/main.165a2ca9.js.map",
+    "main.e50af251.js.map": "/millennium-falcon/static/js/main.e50af251.js.map",
     "453.43c721aa.chunk.js.map": "/millennium-falcon/static/js/453.43c721aa.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a0976fbc.css",
-    "static/js/main.165a2ca9.js"
+    "static/js/main.e50af251.js"
   ]
 }
