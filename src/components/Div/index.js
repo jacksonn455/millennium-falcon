@@ -31,10 +31,10 @@ const FooterField = styled.div`
 const ProdutoList = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center; 
+  align-items: center;
   width: 100%;
   margin-bottom: 20px;
-  gap: 10px; 
+  gap: 10px;
   padding: 0 20px;
   margin-left: 40px;
 `;
@@ -77,6 +77,34 @@ const CardContainer = styled.div`
   justify-content: center;
 `;
 
+const AppContainer = styled.div`
+  width: 100vw;
+  height: 100vh;
+`;
+
+const ProductList = styled.div`
+  margin-top: 20px;
+`;
+
+const ProductCard = styled.div`
+  background-color: #f9f9f9;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const AppointmentList = styled.div`
+  margin-top: 20px;
+`;
+
+const AppointmentCard = styled.div`
+  background-color: #f9f9f9;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
 
 export {
   Section,
@@ -88,4 +116,9 @@ export {
   MessageCard,
   NewUsers,
   CardContainer,
+  AppContainer,
+  ProductList,
+  ProductCard,
+  AppointmentList,
+  AppointmentCard
 };

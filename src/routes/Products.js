@@ -1,31 +1,10 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import Container from "../components/Container";
-import { Title, SectionTitle } from "../components/Title";
+import { Title, SectionTitle, ProductName } from "../components/Title";
 import { Button, ButtonGroup } from "../components/Button";
 import { Label } from "../components/Label";
 import { AnamneseInput } from "../components/Input";
-
-const AppContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
-`;
-
-const ProductList = styled.div`
-  margin-top: 20px;
-`;
-
-const ProductCard = styled.div`
-  background-color: #f9f9f9;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const ProductName = styled.h3`
-  margin: 0;
-`;
+import { AppContainer, ProductList, ProductCard } from "../components/Div";
 
 function Product() {
   const [productName, setProductName] = useState("");
@@ -165,15 +144,32 @@ function Product() {
           {productList.map((product) => (
             <ProductCard key={product.id}>
               <ProductName>{product.name}</ProductName>
-              <p><strong>Categoria:</strong> {product.category}</p>
-              <p><strong>Quantidade:</strong> {product.quantity}</p>
-              <p><strong>Validade:</strong> {product.validity}</p>
-              <p><strong>Preço:</strong> R$ {product.price}</p>
-              <p><strong>Fornecedor:</strong> {product.supplier}</p>
-              <p><strong>Composição:</strong> {product.composition}</p>
+              <p>
+                <strong>Categoria:</strong> {product.category}
+              </p>
+              <p>
+                <strong>Quantidade:</strong> {product.quantity}
+              </p>
+              <p>
+                <strong>Validade:</strong> {product.validity}
+              </p>
+              <p>
+                <strong>Preço:</strong> R$ {product.price}
+              </p>
+              <p>
+                <strong>Fornecedor:</strong> {product.supplier}
+              </p>
+              <p>
+                <strong>Composição:</strong> {product.composition}
+              </p>
               {product.image && (
                 <div>
-                  <img src={product.image} alt={product.name} width="100" height="100" />
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    width="100"
+                    height="100"
+                  />
                 </div>
               )}
             </ProductCard>
