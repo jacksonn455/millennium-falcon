@@ -17,6 +17,7 @@ const GlobalStyle = createGlobalStyle`
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 
   code {
@@ -28,8 +29,62 @@ const GlobalStyle = createGlobalStyle`
     list-style: none;    
   }
 
+  @media (max-width: 768px) { /* Dispositivos menores que 768px (como tablets e smartphones) */
+    body {
+      padding: 0;
+    }
 
+    h1, h2, h3 {
+      font-size: 18px; /* Reduz o tamanho das fontes */
+    }
+
+    .container {
+      padding: 10px;
+    }
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+    }
+
+    /* Ajustes em outros componentes específicos */
+    .button {
+      font-size: 14px;
+      padding: 10px;
+    }
+  }
+
+  @media (max-width: 480px) { /* Para smartphones como iPhone */
+    body {
+      padding: 0;
+    }
+
+    .container {
+      padding: 5px;
+    }
+
+    .header {
+      padding: 5px;
+    }
+
+    .logo {
+      width: 120px; /* Ajuste do tamanho do logo */
+    }
+
+    /* Ajustes de padding e layout para facilitar a navegação em telas pequenas */
+    .menu {
+      display: block;
+      padding: 10px;
+    }
+
+    .button {
+      font-size: 12px;
+      padding: 8px;
+    }
+  }
 `;
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

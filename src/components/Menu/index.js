@@ -13,6 +13,12 @@ const menuItems = [
 const Icons = styled.ul`
   display: flex;
   align-items: center;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
 `;
 
 const IconLink = styled(Link)`
@@ -47,6 +53,12 @@ const Icon = styled.li`
 
   &:hover svg {
     fill: #ff0073;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+    padding: 10px;
+    min-width: unset;
   }
 `;
 

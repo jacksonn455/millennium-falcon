@@ -1,11 +1,11 @@
 import React, { useState } from "react";
+import axios from "axios"; // Importar axios para fazer a requisição HTTP
 import Container from "../components/Container";
 import { Title, SectionTitle, AppointmentTitle } from "../components/Title";
 import { Button, ButtonGroup } from "../components/Button";
 import { Label } from "../components/Label";
 import { AnamneseInput } from "../components/Input";
 import { AppContainer, AppointmentList, AppointmentCard } from "../components/Div";
-
 
 function Planner() {
   const [date, setDate] = useState("");
@@ -18,18 +18,26 @@ function Planner() {
   const [status, setStatus] = useState("Pendente");
   const [appointments, setAppointments] = useState([]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const newAppointment = { date, time, paciente, service, contact, notes, responsible, status };
-    setAppointments([...appointments, newAppointment]);
-    setDate("");
-    setTime("");
-    setPaciente("");
-    setService("");
-    setContact("");
-    setNotes("");
-    setResponsible("");
-    setStatus("Pendente");
+
+    try {
+      const response = await axios.post("http://localhost:8000/agenda", newAppointment);
+      setAppointments([...appointments, response.data]);
+
+      setDate("");
+      setTime("");
+      setPaciente("");
+      setService("");
+      setContact("");
+      setNotes("");
+      setResponsible("");
+      setStatus("Pendente");
+    } catch (error) {
+      console.error("Erro ao criar agendamento:", error);
+    }
   };
 
   return (
@@ -108,16 +116,6 @@ function Planner() {
               value={responsible}
               onChange={(e) => setResponsible(e.target.value)}
               placeholder="Nome do profissional responsável"
-            />
-          </div>
-
-          <div>
-            <Label>Status do Agendamento:</Label>
-            <AnamneseInput
-              type="text"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              placeholder="Status do agendamento"
             />
           </div>
 

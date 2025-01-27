@@ -8,9 +8,17 @@ const TableContainer = styled.div`
 
 const Table = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr); // Mudança de 8 para 4 colunas
+  grid-template-columns: repeat(4, 1fr);
   gap: 1px;
   background: #c7628f;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const TableCell = styled.div`

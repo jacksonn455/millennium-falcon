@@ -7,6 +7,11 @@ const UsersActiveContainer = styled.section`
   flex-direction: column;
   align-items: center;
   padding-top: 30px;
+
+  @media (max-width: 768px) {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
 `;
 
 export { UsersActiveContainer };

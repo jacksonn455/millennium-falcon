@@ -6,16 +6,21 @@ import { ButtonEstatistica } from "../Button";
 
 const Card = styled.div`
   align-items: center;
-    background-color: #FFF;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 10px;
-    display: flex;
-    margin: 20px auto 0 auto;
-    max-width: 600px;
-    padding: 25px 20px;
-    justify-content: space-around;
-    width: 100%;  
-`
+  background-color: #fff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  display: flex;
+  margin: 20px auto 0 auto;
+  max-width: 600px;
+  padding: 25px 20px;
+  justify-content: space-around;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 20px;
+  }
+`;
 
 const Descricao = styled.p`
   max-width: 300px;
@@ -27,6 +32,10 @@ const Subtitulo = styled.h4`
   font-size: 18px;
   font-weight: bold;
   margin: 15px 0;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
 const ImgProduto = styled.img`
@@ -35,6 +44,12 @@ const ImgProduto = styled.img`
   object-fit: cover;
   border-radius: 8px;
   margin-right: 15px;
+
+  @media (max-width: 768px) {
+    width: 80px;
+    height: 80px;
+    margin-right: 0;
+  }
 `;
 
 const CardVencido = styled(Card)`
@@ -46,7 +61,11 @@ const TituloVencido = styled.h3`
   font-size: 20px;
   font-weight: bold;
   margin: 10px 0;
-  text-align: center; /* Adiciona centralização ao título */
+  text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 function CardRecomenda({ titulo, subtitulo, descricao, img }) {

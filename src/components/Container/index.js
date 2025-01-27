@@ -10,6 +10,16 @@ const Container = styled.div`
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
   color: #c7628f;
+
+  @media (max-width: 1024px) {
+    padding: 15px;
+    max-width: 90%;
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px;
+    max-width: 100%;
+  }
 `;
 
 export default Container;

@@ -12,11 +12,21 @@ const LogoContainer = styled.div`
   &:hover {
     color: #ff0073;
   }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const LogoImg = styled.img`
   height: 110px;
   width: 110px;
+
+  @media (max-width: 768px) {
+    height: 80px; /* Ajusta o tamanho da imagem para dispositivos menores */
+    width: 80px;
+  }
 `;
 
 const TextContainer = styled(Link)`
@@ -24,6 +34,11 @@ const TextContainer = styled(Link)`
   cursor: pointer;
   text-decoration: none;
   color: inherit;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    margin-top: 10px;
+  }
 `;
 
 const Name = styled.p`
@@ -31,6 +46,10 @@ const Name = styled.p`
   font-family: "Pacifico", serif;
   margin: 0;
   text-decoration: none;
+
+  @media (max-width: 768px) {
+    font-size: 28px; /* Ajusta o tamanho da fonte em telas menores */
+  }
 `;
 
 const LastName = styled.p`
@@ -38,6 +57,10 @@ const LastName = styled.p`
   font-family: "Playwrite IN", serif;
   margin: 0;
   text-decoration: none;
+
+  @media (max-width: 768px) {
+    font-size: 26px; /* Ajusta o tamanho da fonte em telas menores */
+  }
 `;
 
 function Logo() {

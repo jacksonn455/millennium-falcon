@@ -10,6 +10,10 @@ const TermsContainer = styled.div`
   border: 1px solid #ddd;
   border-radius: 4px;
   background: #f9f9f9;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
 `;
 
 const Term = styled.div`
@@ -22,10 +26,15 @@ const Footer = styled.div`
   margin-top: 20px;
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 `;
 
 const FooterField = styled.div`
   text-align: center;
+  width: 100%;
+  @media (min-width: 768px) {
+    width: auto;
+  }
 `;
 
 const ProdutoList = styled.div`
@@ -36,7 +45,11 @@ const ProdutoList = styled.div`
   margin-bottom: 20px;
   gap: 10px;
   padding: 0 20px;
-  margin-left: 40px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 0 15px;
+  }
 `;
 
 const MessageCard = styled.div`
@@ -50,6 +63,11 @@ const MessageCard = styled.div`
   align-items: center;
   width: 100%;
   max-width: 600px;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 15px;
+  }
 `;
 
 const NewUsers = styled.div`
@@ -60,6 +78,10 @@ const NewUsers = styled.div`
   gap: 20px;
   width: 100%;
   max-width: 1200px;
+
+  @media (max-width: 768px) {
+    gap: 15px;
+  }
 `;
 
 const CardContainer = styled.div`
@@ -75,6 +97,11 @@ const CardContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 768px) {
+    padding: 20px;
+    margin-left: 15px;
+  }
 `;
 
 const AppContainer = styled.div`
@@ -92,6 +119,10 @@ const ProductCard = styled.div`
   margin: 10px 0;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
 `;
 
 const AppointmentList = styled.div`
@@ -104,6 +135,10 @@ const AppointmentCard = styled.div`
   margin: 10px 0;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
 `;
 
 export {

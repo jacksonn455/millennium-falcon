@@ -5,6 +5,10 @@ const RadioGroup = styled.div`
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 5px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const RadioLabel = styled.label`
@@ -12,6 +16,10 @@ const RadioLabel = styled.label`
   align-items: center;
   font-size: 14px;
   color: #c7628f;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
 const RadioInput = styled.input`

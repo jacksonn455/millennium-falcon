@@ -10,9 +10,13 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   margin: 10px auto 0 auto;
-  max-width: 600px;
   padding: 25px 20px;
   width: 100%;
+  max-width: 600px;
+  @media (max-width: 768px) {
+    max-width: 90%;
+    padding: 15px 10px;
+  }
 `;
 
 const BirthdayList = styled.div`
@@ -22,7 +26,11 @@ const BirthdayList = styled.div`
   padding: 0;
   margin: 20px 0;
   width: 100%;
-  margin-left: 40px;
+  margin-left: 0;
+  @media (max-width: 768px) {
+    margin-left: 0;
+    justify-content: center;
+  }
 `;
 
 const BirthdayItem = styled.div`
@@ -31,6 +39,11 @@ const BirthdayItem = styled.div`
   width: 48%;
   margin-bottom: 10px;
   font-size: 16px;
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 15px;
+  }
 `;
 
 const ProfileImage = styled.img`
@@ -38,6 +51,11 @@ const ProfileImage = styled.img`
   height: 90px;
   border-radius: 50%;
   margin-right: 15px;
+  @media (max-width: 768px) {
+    width: 70px;
+    height: 70px;
+    margin-right: 10px;
+  }
 `;
 
 const InfoContainer = styled.div`

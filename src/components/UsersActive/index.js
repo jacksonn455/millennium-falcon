@@ -15,6 +15,16 @@ const ProfileImage = styled.img`
   height: 90px;
   border-radius: 50%;
   margin-right: 15px;
+
+  @media (max-width: 768px) {
+    width: 75px;
+    height: 75px;
+  }
+
+  @media (max-width: 480px) {
+    width: 60px;
+    height: 60px;
+  }
 `;
 
 function UsersActive() {
@@ -31,7 +41,12 @@ function UsersActive() {
             <img
               src={paciente.src}
               alt={paciente.nome}
-              style={{ width: "200px", height: "200px", borderRadius: "50%" }}
+              style={{
+                width: "200px",
+                height: "200px",
+                borderRadius: "50%",
+                marginBottom: "10px",
+              }}
             />
             <p>
               <strong>{paciente.nome}</strong>

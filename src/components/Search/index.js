@@ -10,6 +10,11 @@ const SearchContainer = styled.section`
   padding: 85px 0;
   height: 280px;
   width: 100%;
+
+  @media (max-width: 768px) {
+    padding: 50px 0;
+    height: auto;
+  }
 `;
 
 const Title = styled.h1`
@@ -17,12 +22,20 @@ const Title = styled.h1`
   font-size: 40px;
   text-align: center;
   width: 100%;
+
+  @media (max-width: 768px) {
+    font-size: 30px;
+  }
 `;
 
 const SubTitle = styled.h2`
   font-size: 20px;
   font-weight: 500;
   margin-bottom: 40px;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
 const Result = styled.div`
@@ -31,6 +44,9 @@ const Result = styled.div`
   align-items: center;
   margin-bottom: 20px;
   cursor: pointer;
+  width: 100%;
+  max-width: 400px;
+  margin: 10px auto;
 
   p {
     width: 200px;
@@ -41,6 +57,19 @@ const Result = styled.div`
 
   &:hover {
     border: 1px solid white;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+
+    img {
+      width: 80px;
+    }
+
+    p {
+      width: 100%;
+    }
   }
 `;
 

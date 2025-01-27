@@ -4,6 +4,11 @@ const ButtonGroup = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
 `;
 
 const Button = styled.button`
@@ -17,6 +22,7 @@ const Button = styled.button`
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  width: auto;
 
   &:hover {
     background: linear-gradient(45deg, #b0507e, #c7628f);
@@ -27,6 +33,12 @@ const Button = styled.button`
   &:active {
     transform: scale(0.95);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px 20px;
+    font-size: 14px;
+    width: 100%;
   }
 `;
 
@@ -40,24 +52,41 @@ const ButtonHome = styled.button`
   cursor: pointer;
   margin-top: 20px;
   width: 150px;
+  transition: background-color 0.3s ease;
+
   &:hover {
     background-color: #8b1e4d;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 14px;
   }
 `;
 
 const ButtonEstatistica = styled.button`
-    background-color: #A8235E;
-    color: #FFF;
-    padding: 10px 0px;
-    font-size: 16px;
-    border: none;
-    font-weight: 900;
-    display: block;
-    text-align: center;
-    width: 150px;
-    &:hover {
-        cursor: pointer;
-    }
-`
+  background-color: #a8235e;
+  color: #FFF;
+  padding: 10px 0px;
+  font-size: 16px;
+  border: none;
+  font-weight: 900;
+  display: block;
+  text-align: center;
+  width: 150px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    cursor: pointer;
+    background-color: #8b1e4d;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+`;
 
 export { ButtonGroup, Button, ButtonHome, ButtonEstatistica };

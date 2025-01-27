@@ -3,7 +3,6 @@ import styled from "styled-components";
 const Input = styled.input`
   border: 1px solid #fff;
   background: transparent;
-  border: 1px solid #fff;
   padding: 20px 140px;
   border-radius: 50px;
   width: 210px;
@@ -15,6 +14,11 @@ const Input = styled.input`
     color: #fff;
     font-size: 16px;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 15px 20px;
+  }
 `;
 
 const AnamneseInput = styled.input`
@@ -23,6 +27,10 @@ const AnamneseInput = styled.input`
   border: 1px solid #ddd;
   border-radius: 4px;
   color: #c7628f;
+
+  @media (max-width: 768px) {
+    padding: 8px;
+  }
 `;
 
 const InputData = styled.input`
@@ -35,6 +43,10 @@ const InputData = styled.input`
   margin-bottom: 10px;
   border-radius: 4px;
   color: #c7628f;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
 const InputRow = styled.div`
@@ -42,6 +54,11 @@ const InputRow = styled.div`
   gap: 10px;
   margin-bottom: 15px;
   color: #c7628f;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 5px;
+  }
 `;
 
 const FooterInput = styled.input`
@@ -51,6 +68,11 @@ const FooterInput = styled.input`
   padding: 5px;
   width: 150px;
   color: #c7628f;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 5px;
+  }
 `;
 
 export { Input, AnamneseInput, InputData, InputRow, FooterInput };
