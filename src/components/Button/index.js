@@ -67,7 +67,7 @@ const ButtonHome = styled.button`
 
 const ButtonEstatistica = styled.button`
   background-color: #a8235e;
-  color: #FFF;
+  color: #fff;
   padding: 10px 0px;
   font-size: 16px;
   border: none;
@@ -76,6 +76,7 @@ const ButtonEstatistica = styled.button`
   text-align: center;
   width: 150px;
   transition: background-color 0.3s ease;
+  margin-top: 10px;
 
   &:hover {
     cursor: pointer;
@@ -84,7 +85,7 @@ const ButtonEstatistica = styled.button`
 
   @media (max-width: 768px) {
     width: 100%;
-    padding: 12px 20px;
+    padding: 12px 10px;
     font-size: 14px;
   }
 `;

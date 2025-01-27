@@ -1,6 +1,6 @@
 import logo from "../../assets/images/logo.png";
 import styled from "styled-components";
-import "@fontsource/pacifico"; 
+import "@fontsource/pacifico";
 import "@fontsource/playwrite-in";
 import { Link } from "react-router-dom";
 
@@ -24,7 +24,7 @@ const LogoImg = styled.img`
   width: 110px;
 
   @media (max-width: 768px) {
-    height: 80px; /* Ajusta o tamanho da imagem para dispositivos menores */
+    height: 80px;
     width: 80px;
   }
 `;
@@ -48,7 +48,7 @@ const Name = styled.p`
   text-decoration: none;
 
   @media (max-width: 768px) {
-    font-size: 28px; /* Ajusta o tamanho da fonte em telas menores */
+    font-size: 28px;
   }
 `;
 
@@ -59,7 +59,7 @@ const LastName = styled.p`
   text-decoration: none;
 
   @media (max-width: 768px) {
-    font-size: 26px; /* Ajusta o tamanho da fonte em telas menores */
+    font-size: 26px;
   }
 `;
 

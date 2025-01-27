@@ -7,6 +7,6 @@ export const Label = styled.label`
   color: #c7628f;
 
   @media (max-width: 768px) {
-    font-size: 14px; /* Ajusta o tamanho da fonte em telas menores */
+    font-size: 14px;
   }
 `;

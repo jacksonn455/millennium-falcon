@@ -7,13 +7,18 @@ import { TextArea } from "../../components/TextArea";
 import { Label } from "../../components/Label";
 import { Checkbox } from "../../components/CheckBox";
 import { AnamneseInput } from "../../components/Input";
-import { Section, TermsContainer, Term, Footer, FooterField } from "../../components/Div";
+import {
+  Section,
+  TermsContainer,
+  Term,
+  Footer,
+  FooterField,
+} from "../../components/Div";
 import { FooterInput } from "../../components/Input";
 
 const ThirdPage = ({ nextPage, prevPage }) => {
   const signatureRef = useRef(null);
 
-  // Função para limpar a assinatura
   const clearSignature = () => {
     signatureRef.current.clear();
   };

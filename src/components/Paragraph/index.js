@@ -20,6 +20,10 @@ const ProdutoTitulo = styled.p`
   @media (max-width: 768px) {
     font-size: 16px;
   }
+
+    @media (max-width: 480px) {
+    font-size: 14px;
+  }
 `;
 
 const ProdutoDescricao = styled.p`
@@ -29,6 +33,11 @@ const ProdutoDescricao = styled.p`
 
   @media (max-width: 768px) {
     font-size: 14px;
+  color: ${(props) => props.cor || "#000"};
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+    color: ${(props) => props.cor || "#000"};
   }
 `;
 

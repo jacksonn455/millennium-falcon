@@ -8,7 +8,9 @@ import { InputData } from "../../components/Input";
 import { Table, TableCell, TableContainer } from "../../components/Table";
 
 const FourthPage = ({ nextPage, prevPage }) => {
-  const signatureRefs = useRef(Array.from({ length: 12 }, () => React.createRef()));
+  const signatureRefs = useRef(
+    Array.from({ length: 12 }, () => React.createRef())
+  );
 
   const clearSignature = (index) => {
     if (signatureRefs.current[index]?.current) {
@@ -20,7 +22,6 @@ const FourthPage = ({ nextPage, prevPage }) => {
     <Container>
       <Title>Assinaturas</Title>
       <TableContainer>
-        {/* Primeira Tabela */}
         <Table>
           {Array.from({ length: 4 }).map((_, i) => (
             <TableCell key={`cell-1-${i}`}>
@@ -28,14 +29,13 @@ const FourthPage = ({ nextPage, prevPage }) => {
               <InputData type="text" placeholder="_ / _ / __" />
               <Signatures
                 refCanvas={signatureRefs.current[i]}
-                onClear={() => clearSignature(i)} // Passa o índice correto
+                onClear={() => clearSignature(i)}
                 label="Assinatura"
               />
             </TableCell>
           ))}
         </Table>
 
-        {/* Segunda Tabela */}
         <Table>
           {Array.from({ length: 4 }).map((_, i) => (
             <TableCell key={`cell-2-${i}`}>
@@ -43,14 +43,13 @@ const FourthPage = ({ nextPage, prevPage }) => {
               <InputData type="text" placeholder="_ / _ / __" />
               <Signatures
                 refCanvas={signatureRefs.current[4 + i]}
-                onClear={() => clearSignature(4 + i)} // Passa o índice correto
+                onClear={() => clearSignature(4 + i)}
                 label="Assinatura"
               />
             </TableCell>
           ))}
         </Table>
 
-        {/* Terceira Tabela */}
         <Table>
           {Array.from({ length: 4 }).map((_, i) => (
             <TableCell key={`cell-3-${i}`}>
@@ -58,7 +57,7 @@ const FourthPage = ({ nextPage, prevPage }) => {
               <InputData type="text" placeholder="_ / _ / __" />
               <Signatures
                 refCanvas={signatureRefs.current[8 + i]}
-                onClear={() => clearSignature(8 + i)} // Passa o índice correto
+                onClear={() => clearSignature(8 + i)}
                 label="Assinatura"
               />
             </TableCell>

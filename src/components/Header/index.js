@@ -4,10 +4,16 @@ import Logo from "../Logo";
 import Menu from "../Menu";
 import styled from "styled-components";
 
+const colors = {
+  primary: "#a8235e",
+  hover: "#ff0073",
+  background: "#fff",
+};
+
 const HeaderContainer = styled.header`
-  background-color: #fff;
+  background-color: ${colors.background};
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 10px 20px;
   width: 100%;
@@ -20,7 +26,6 @@ const HeaderContainer = styled.header`
   }
 
   @media (max-width: 768px) {
-    flex-direction: column;
     padding: 10px 10px;
     align-items: flex-start;
   }
@@ -31,26 +36,26 @@ const StyledLink = styled(Link)`
   color: inherit;
 
   @media (max-width: 768px) {
-    width: 150px;
+    display: none;
   }
 `;
 
 const MenuContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
 
   @media (max-width: 1024px) {
     justify-content: center;
   }
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     width: 100%;
     display: ${(props) => (props.isOpen ? "flex" : "none")};
     margin-top: 10px;
-    background-color: #fff;
+    background-color: ${colors.background};
     position: absolute;
     top: 60px;
     left: 0;
@@ -66,6 +71,7 @@ const HamburgerButton = styled.div`
     display: block;
     cursor: pointer;
     font-size: 30px;
+    color: ${colors.primary};
   }
 `;
 
@@ -76,6 +82,29 @@ const MenuList = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 10px;
+    padding: 10px;
+  }
+`;
+
+const HomeLink = styled(Link)`
+  text-decoration: none;
+  color: ${colors.primary};
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  font-family: "Noto Serif", serif;
+
+  @media (max-width: 768px) {
+    display: block;
+    text-align: center;
+  }
+
+  @media (min-width: 769px) {
+    display: none;
+  }
+
+  &:hover {
+    color: ${colors.hover};
   }
 `;
 
@@ -89,11 +118,10 @@ function Header() {
       <StyledLink to="/">
         <Logo />
       </StyledLink>
-      <HamburgerButton onClick={toggleMenu}>
-        ☰
-      </HamburgerButton>
+      <HamburgerButton onClick={toggleMenu}>☰</HamburgerButton>
       <MenuContainer isOpen={isMenuOpen}>
         <MenuList>
+          <HomeLink to="/">HOME</HomeLink>
           <Menu />
         </MenuList>
       </MenuContainer>

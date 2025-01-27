@@ -17,8 +17,7 @@ const Card = styled.div`
   width: 100%;
 
   @media (max-width: 768px) {
-    flex-direction: column;
-    padding: 20px;
+    max-width: 90%;
   }
 `;
 
@@ -36,6 +35,10 @@ const Subtitulo = styled.h4`
   @media (max-width: 768px) {
     font-size: 16px;
   }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
 `;
 
 const ImgProduto = styled.img`
@@ -50,10 +53,21 @@ const ImgProduto = styled.img`
     height: 80px;
     margin-right: 0;
   }
+
+  @media (max-width: 480px) {
+    width: 60px;
+    height: 60px;
+    margin: 10px auto;
+  }
 `;
 
 const CardVencido = styled(Card)`
   background-color: ${(props) => props.cor || "#FFF"};
+
+  @media (max-width: 480px) {
+    padding: 15px;
+    align-items: center;
+  }
 `;
 
 const TituloVencido = styled.h3`
@@ -65,6 +79,12 @@ const TituloVencido = styled.h3`
 
   @media (max-width: 768px) {
     font-size: 18px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 16px;
+    text-align: center;
+    margin: 8px 0;
   }
 `;
 
@@ -102,8 +122,18 @@ function CardProdutoVencido({ nome, vencimento, img, cor }) {
 
 function getProximosProdutosVencimento() {
   const produtosVencimento = [
-    { id: 1, nome: "Protetor Solar", vencimento: "2025-01-01", src: protetorSolar },
-    { id: 2, nome: "Espuma Facial", vencimento: "2025-02-05", src: EspumaFacial },
+    {
+      id: 1,
+      nome: "Protetor Solar",
+      vencimento: "2025-01-01",
+      src: protetorSolar,
+    },
+    {
+      id: 2,
+      nome: "Espuma Facial",
+      vencimento: "2025-02-05",
+      src: EspumaFacial,
+    },
   ];
 
   const dataAtual = new Date();

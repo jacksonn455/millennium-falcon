@@ -11,11 +11,6 @@ const Container = styled.div`
   font-family: Arial, sans-serif;
   color: #c7628f;
 
-  @media (max-width: 1024px) {
-    padding: 15px;
-    max-width: 90%;
-  }
-
   @media (max-width: 768px) {
     padding: 10px;
     max-width: 100%;

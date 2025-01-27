@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import axios from "axios"; // Importar axios para fazer a requisição HTTP
+import axios from "axios";
 import Container from "../components/Container";
 import { Title, SectionTitle, AppointmentTitle } from "../components/Title";
 import { Button, ButtonGroup } from "../components/Button";
 import { Label } from "../components/Label";
 import { AnamneseInput } from "../components/Input";
-import { AppContainer, AppointmentList, AppointmentCard } from "../components/Div";
+import {
+  AppContainer,
+  AppointmentList,
+  AppointmentCard,
+} from "../components/Div";
 
 function Planner() {
   const [date, setDate] = useState("");
@@ -21,10 +25,22 @@ function Planner() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newAppointment = { date, time, paciente, service, contact, notes, responsible, status };
+    const newAppointment = {
+      date,
+      time,
+      paciente,
+      service,
+      contact,
+      notes,
+      responsible,
+      status,
+    };
 
     try {
-      const response = await axios.post("http://localhost:8000/agenda", newAppointment);
+      const response = await axios.post(
+        "http://localhost:8000/agenda",
+        newAppointment
+      );
       setAppointments([...appointments, response.data]);
 
       setDate("");
@@ -128,14 +144,31 @@ function Planner() {
         <AppointmentList>
           {appointments.map((appointment, index) => (
             <AppointmentCard key={index}>
-              <AppointmentTitle>Consulta de {appointment.paciente}</AppointmentTitle>
-              <p><strong>Data:</strong> {appointment.date}</p>
-              <p><strong>Hora:</strong> {appointment.time}</p>
-              <p><strong>Tipo de Serviço:</strong> {appointment.service}</p>
-              <p><strong>Telefone/Contato:</strong> {appointment.contact}</p>
-              <p><strong>Observações:</strong> {appointment.notes}</p>
-              <p><strong>Profissional Responsável:</strong> {appointment.responsible}</p>
-              <p><strong>Status:</strong> {appointment.status}</p>
+              <AppointmentTitle>
+                Consulta de {appointment.paciente}
+              </AppointmentTitle>
+              <p>
+                <strong>Data:</strong> {appointment.date}
+              </p>
+              <p>
+                <strong>Hora:</strong> {appointment.time}
+              </p>
+              <p>
+                <strong>Tipo de Serviço:</strong> {appointment.service}
+              </p>
+              <p>
+                <strong>Telefone/Contato:</strong> {appointment.contact}
+              </p>
+              <p>
+                <strong>Observações:</strong> {appointment.notes}
+              </p>
+              <p>
+                <strong>Profissional Responsável:</strong>{" "}
+                {appointment.responsible}
+              </p>
+              <p>
+                <strong>Status:</strong> {appointment.status}
+              </p>
             </AppointmentCard>
           ))}
         </AppointmentList>

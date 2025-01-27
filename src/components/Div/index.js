@@ -1,5 +1,36 @@
 import styled from "styled-components";
 
+const Card = styled.div`
+  align-items: center;
+  background-color: #fff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  display: flex;
+  margin: 20px auto 0 auto;
+  max-width: 600px;
+  padding: 25px 20px;
+  justify-content: space-around;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 90%;
+    padding: 15px 10px;
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    padding: 15px;
+    align-items: center;
+    text-align: center;
+    max-width: 90%;
+  }
+`;
+
 const Section = styled.div`
   margin-bottom: 20px;
 `;
@@ -14,12 +45,21 @@ const TermsContainer = styled.div`
   @media (max-width: 768px) {
     padding: 12px;
   }
+
+  @media (max-width: 480px) {
+    padding: 10px;
+  }
 `;
 
 const Term = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
 `;
 
 const Footer = styled.div`
@@ -47,8 +87,10 @@ const ProdutoList = styled.div`
   padding: 0 20px;
 
   @media (max-width: 768px) {
+    max-width: 90%;
     flex-direction: column;
-    padding: 0 15px;
+    align-items: center;
+    display: block;
   }
 `;
 
@@ -68,6 +110,10 @@ const MessageCard = styled.div`
     max-width: 100%;
     padding: 15px;
   }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+  }
 `;
 
 const NewUsers = styled.div`
@@ -81,6 +127,12 @@ const NewUsers = styled.div`
 
   @media (max-width: 768px) {
     gap: 15px;
+  }
+
+  @media (max-width: 480px) {
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
   }
 `;
 
@@ -99,8 +151,15 @@ const CardContainer = styled.div`
   justify-content: center;
 
   @media (max-width: 768px) {
-    padding: 20px;
-    margin-left: 15px;
+    max-width: 90%;
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    padding: 15px;
+    align-items: center;
+    text-align: center;
+    max-width: 90%;
   }
 `;
 
@@ -123,6 +182,11 @@ const ProductCard = styled.div`
   @media (max-width: 768px) {
     padding: 12px;
   }
+
+  @media (max-width: 480px) {
+    padding: 8px;
+    margin: 8px 0;
+  }
 `;
 
 const AppointmentList = styled.div`
@@ -138,6 +202,10 @@ const AppointmentCard = styled.div`
 
   @media (max-width: 768px) {
     padding: 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px;
   }
 `;
 
@@ -155,5 +223,6 @@ export {
   ProductList,
   ProductCard,
   AppointmentList,
-  AppointmentCard
+  AppointmentCard,
+  Card,
 };

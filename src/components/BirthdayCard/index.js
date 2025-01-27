@@ -52,9 +52,13 @@ const ProfileImage = styled.img`
   border-radius: 50%;
   margin-right: 15px;
   @media (max-width: 768px) {
-    width: 70px;
-    height: 70px;
-    margin-right: 10px;
+    width: 75px;
+    height: 75px;
+  }
+
+  @media (max-width: 480px) {
+    width: 50px;
+    height: 50px;
   }
 `;
 

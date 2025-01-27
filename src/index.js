@@ -17,29 +17,59 @@ const GlobalStyle = createGlobalStyle`
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+    overflow-x: hidden; 
+    background-color: #f9f9f9; 
+    line-height: 1.5; 
   }
 
-  code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-      monospace;
+  html, body {
+    width: 100%; 
+    height: 100%; 
+    overflow-x: hidden; 
   }
 
   li {
     list-style: none;    
   }
 
-  @media (max-width: 768px) { /* Dispositivos menores que 768px (como tablets e smartphones) */
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  img {
+    max-width: 100%; 
+    height: auto;
+    display: block;
+  }
+
+  
+  @media (max-width: 768px) { 
     body {
       padding: 0;
     }
 
-    h1, h2, h3 {
-      font-size: 18px; /* Reduz o tamanho das fontes */
+    h1 {
+      font-size: 24px; 
+    }
+
+    h2, h3 {
+      font-size: 20px;
+    }
+
+    h4, h5, h6 {
+      font-size: 18px;
     }
 
     .container {
       padding: 10px;
+      width: 100%; 
+      overflow-x: hidden;
     }
 
     .header {
@@ -48,43 +78,77 @@ const GlobalStyle = createGlobalStyle`
       padding: 10px;
     }
 
-    /* Ajustes em outros componentes específicos */
     .button {
       font-size: 14px;
-      padding: 10px;
+      padding: 10px 15px;
     }
   }
 
-  @media (max-width: 480px) { /* Para smartphones como iPhone */
+  @media (max-width: 480px) { 
     body {
       padding: 0;
     }
 
+    * {
+        margin: 0;
+        box-sizing: border-box; 
+      }
+
+    h1 {
+      font-size: 20px; 
+    }
+
+    h2, h3 {
+      font-size: 18px;
+    }
+
+    h4, h5, h6 {
+      font-size: 16px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+
     .container {
-      padding: 5px;
+      padding: 8px;
+      width: 100%; 
+      max-width: 100%; 
+      overflow-x: hidden;
     }
 
     .header {
-      padding: 5px;
+      padding: 8px;
+      align-items: center; 
     }
 
     .logo {
-      width: 120px; /* Ajuste do tamanho do logo */
+      width: 100px; 
+      margin: 0 auto;
     }
 
-    /* Ajustes de padding e layout para facilitar a navegação em telas pequenas */
     .menu {
       display: block;
-      padding: 10px;
+      padding: 10px 0;
+      font-size: 14px; 
+      text-align: center;
     }
 
     .button {
       font-size: 12px;
-      padding: 8px;
+      padding: 10px 20px; 
+      width: 100%; 
+      max-width: 300px; 
+      margin: 10px auto; 
+      border-radius: 8px; 
+    }
+
+    img {
+      max-width: 100%; 
+      height: auto;
     }
   }
 `;
-
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
