@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const pacientesAPI = axios.create({
-  baseURL: "http://localhost:8000/pacientes",
+  baseURL: "https://death-star.onrender.com/pacientes",
 });
 
 async function getPacientes() {

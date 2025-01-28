@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Container from "../components/Container";
 import { Title, SectionTitle, AppointmentTitle } from "../components/Title";
@@ -22,6 +22,18 @@ function Planner() {
   const [status, setStatus] = useState("Pendente");
   const [appointments, setAppointments] = useState([]);
 
+  useEffect(() => {
+    async function fetchAppointments() {
+      try {
+        const response = await axios.get("https://death-star.onrender.com/agenda");
+        setAppointments(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar agendamentos:", error);
+      }
+    }
+    fetchAppointments();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -38,7 +50,7 @@ function Planner() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/agenda",
+        "https://death-star.onrender.com/agenda",
         newAppointment
       );
       setAppointments([...appointments, response.data]);

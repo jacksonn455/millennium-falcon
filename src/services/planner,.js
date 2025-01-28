@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const agendamentosAPI = axios.create({
-  baseURL: "http://localhost:8000/agenda",
+  baseURL: "https://death-star.onrender.com/agenda",
 });
 
 async function getAgendamentos() {
