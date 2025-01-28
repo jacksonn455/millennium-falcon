@@ -21,11 +21,14 @@ function Planner() {
   const [responsible, setResponsible] = useState("");
   const [status, setStatus] = useState("Pendente");
   const [appointments, setAppointments] = useState([]);
+  const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
     async function fetchAppointments() {
       try {
-        const response = await axios.get("https://death-star.onrender.com/agenda");
+        const response = await axios.get(
+          "https://death-star.onrender.com/agenda"
+        );
         setAppointments(response.data);
       } catch (error) {
         console.error("Erro ao buscar agendamentos:", error);
@@ -49,11 +52,24 @@ function Planner() {
     };
 
     try {
-      const response = await axios.post(
-        "https://death-star.onrender.com/agenda",
-        newAppointment
-      );
-      setAppointments([...appointments, response.data]);
+      if (editingId) {
+        const response = await axios.put(
+          `https://death-star.onrender.com/agenda/${editingId}`,
+          newAppointment
+        );
+        setAppointments(
+          appointments.map((appointment) =>
+            appointment._id === editingId ? response.data : appointment
+          )
+        );
+        setEditingId(null);
+      } else {
+        const response = await axios.post(
+          "https://death-star.onrender.com/agenda",
+          newAppointment
+        );
+        setAppointments([...appointments, response.data]);
+      }
 
       setDate("");
       setTime("");
@@ -64,14 +80,39 @@ function Planner() {
       setResponsible("");
       setStatus("Pendente");
     } catch (error) {
-      console.error("Erro ao criar agendamento:", error);
+      console.error("Erro ao criar/editar agendamento:", error);
     }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      console.log("Excluindo agendamento com ID:", id);
+      await axios.delete(`https://death-star.onrender.com/agenda/${id}`);
+      setAppointments(
+        appointments.filter((appointment) => appointment._id !== id)
+      );
+    } catch (error) {
+      console.error("Erro ao excluir agendamento:", error);
+      alert("Erro ao excluir agendamento.");
+    }
+  };
+
+  const handleEdit = (appointment) => {
+    setDate(appointment.date);
+    setTime(appointment.time);
+    setService(appointment.service);
+    setPaciente(appointment.paciente);
+    setContact(appointment.contact);
+    setNotes(appointment.notes);
+    setResponsible(appointment.responsible);
+    setStatus(appointment.status);
+    setEditingId(appointment._id);
   };
 
   return (
     <AppContainer>
       <Container>
-        <Title>Agendar Consulta</Title>
+        <Title>{editingId ? "Editar Consulta" : "Agendar Consulta"}</Title>
 
         <SectionTitle>Detalhes do Agendamento</SectionTitle>
         <form onSubmit={handleSubmit}>
@@ -148,14 +189,33 @@ function Planner() {
           </div>
 
           <ButtonGroup>
-            <Button type="submit">Agendar</Button>
+            <Button type="submit">
+              {editingId ? "Salvar Alterações" : "Agendar"}
+            </Button>
+            {editingId && (
+              <Button
+                onClick={() => {
+                  setEditingId(null);
+                  setDate("");
+                  setTime("");
+                  setService("");
+                  setPaciente("");
+                  setContact("");
+                  setNotes("");
+                  setResponsible("");
+                  setStatus("Pendente");
+                }}
+              >
+                Cancelar
+              </Button>
+            )}
           </ButtonGroup>
         </form>
 
         <SectionTitle>Consultas Agendadas</SectionTitle>
         <AppointmentList>
-          {appointments.map((appointment, index) => (
-            <AppointmentCard key={index}>
+          {appointments.map((appointment) => (
+            <AppointmentCard key={appointment._id}>
               <AppointmentTitle>
                 Consulta de {appointment.paciente}
               </AppointmentTitle>
@@ -178,9 +238,12 @@ function Planner() {
                 <strong>Profissional Responsável:</strong>{" "}
                 {appointment.responsible}
               </p>
-              <p>
-                <strong>Status:</strong> {appointment.status}
-              </p>
+              <ButtonGroup>
+                <Button onClick={() => handleEdit(appointment)}>Editar</Button>
+                <Button onClick={() => handleDelete(appointment._id)}>
+                  Excluir
+                </Button>
+              </ButtonGroup>
             </AppointmentCard>
           ))}
         </AppointmentList>
