@@ -16,6 +16,7 @@ import Product from "./routes/Products";
 import Anamneses from "./routes/Anamneses";
 import Planner from "./routes/Planner";
 import { login } from "./services/login";
+import ProtectedRoute from "./utils/auth";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -180,21 +181,36 @@ const App = () => {
   const handleLogin = async ({ email, password }) => {
     const token = await login({ email, password });
     if (token) {
+      localStorage.setItem("authToken", token); 
       setIsLoggedIn(true);
       navigate("/");
+    } else {
+      alert("Erro ao fazer login. Tente novamente.");
     }
-  };  
+  };
 
   return (
     <div>
       <GlobalStyle />
       {location.pathname !== "/login" && <Header />}
       <Routes>
-      <Route path="/login" element={<Login handleLogin={handleLogin} />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/anamneses" element={<Anamneses />} />
-        <Route path="/produtos" element={<Product />} />
-        <Route path="/agenda" element={<Planner />} />
+        <Route path="/login" element={<Login handleLogin={handleLogin} />} />
+        <Route
+          path="/"
+          element={<ProtectedRoute element={<Home />} />}
+        />
+        <Route
+          path="/anamneses"
+          element={<ProtectedRoute element={<Anamneses />} />}
+        />
+        <Route
+          path="/produtos"
+          element={<ProtectedRoute element={<Product />} />}
+        />
+        <Route
+          path="/agenda"
+          element={<ProtectedRoute element={<Planner />} />}
+        />
       </Routes>
     </div>
   );
