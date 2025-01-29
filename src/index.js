@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import Home from "./routes/Home";
+import Login from "./routes/Login";
 import reportWebVitals from "./reportWebVitals";
 import { createGlobalStyle } from "styled-components";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import Header from "./components/Header";
 import Product from "./routes/Products";
 import Anamneses from "./routes/Anamneses";
 import Planner from "./routes/Planner";
+import { login } from "./services/login";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -150,18 +158,53 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <React.StrictMode>
-    <GlobalStyle />
-    <BrowserRouter basename="/millennium-falcon">
-      <Header />
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      setIsLoggedIn(true);
+      if (location.pathname === "/login") {
+        navigate("/");
+      }
+    } else {
+      if (location.pathname !== "/login") {
+        navigate("/login");
+      }
+    }
+  }, [navigate, location.pathname]);
+
+  const handleLogin = async ({ email, password }) => {
+    const token = await login({ email, password });
+    if (token) {
+      setIsLoggedIn(true);
+      navigate("/");
+    }
+  };
+
+  return (
+    <div>
+      <GlobalStyle />
+      {location.pathname !== "/login" && <Header />}
       <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Home />} />
         <Route path="/anamneses" element={<Anamneses />} />
         <Route path="/produtos" element={<Product />} />
         <Route path="/agenda" element={<Planner />} />
-        <Route path="/" element={<Home />} />
       </Routes>
+    </div>
+  );
+};
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <BrowserRouter basename="/millennium-falcon">
+      <App />
     </BrowserRouter>
   </React.StrictMode>
 );
