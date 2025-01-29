@@ -168,7 +168,7 @@ const App = () => {
     if (token) {
       setIsLoggedIn(true);
       if (location.pathname === "/login") {
-        navigate("/millennium-falcon");
+        navigate("/");
       }
     } else {
       if (location.pathname !== "/login") {
@@ -181,20 +181,20 @@ const App = () => {
     const token = await login({ email, password });
     if (token) {
       setIsLoggedIn(true);
-      navigate("/millennium-falcon");
+      navigate("/");
     }
-  };
+  };  
 
   return (
     <div>
       <GlobalStyle />
       {location.pathname !== "/login" && <Header />}
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/millennium-falcon" element={<Home />} />
-        <Route path="/millennium-falcon/anamneses" element={<Anamneses />} />
-        <Route path="/millennium-falcon/produtos" element={<Product />} />
-        <Route path="/millennium-falcon/agenda" element={<Planner />} />
+      <Route path="/login" element={<Login handleLogin={handleLogin} />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/anamneses" element={<Anamneses />} />
+        <Route path="/produtos" element={<Product />} />
+        <Route path="/agenda" element={<Planner />} />
       </Routes>
     </div>
   );

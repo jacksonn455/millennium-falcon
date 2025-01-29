@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { login } from "../services/login";
 
 const LoginContainer = styled.div`
   display: flex;
@@ -50,15 +49,16 @@ const Title = styled.h2`
   margin-bottom: 20px;
 `;
 
-const Login = () => {
+const Login = ({ handleLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const token = await login({ email, password });
-    if (token) {
-      window.location.href = "/";
+    if (handleLogin) {
+      handleLogin({ email, password });
+    } else {
+      console.error("handleLogin não foi passado como prop.");
     }
   };
 
@@ -69,15 +69,17 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <Input
             type="email"
-            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            required
           />
           <Input
             type="password"
-            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            required
           />
           <Button type="submit">Login</Button>
         </form>
