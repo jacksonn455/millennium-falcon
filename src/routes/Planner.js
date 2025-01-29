@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../services/api"; // Importando a instância de api configurada com o token
 import Container from "../components/Container";
 import { Title, SectionTitle, AppointmentTitle } from "../components/Title";
 import { Button, ButtonGroup } from "../components/Button";
@@ -26,9 +26,7 @@ function Planner() {
   useEffect(() => {
     async function fetchAppointments() {
       try {
-        const response = await axios.get(
-          "https://death-star.onrender.com/agenda"
-        );
+        const response = await api.get("/agenda");
         setAppointments(response.data);
       } catch (error) {
         console.error("Erro ao buscar agendamentos:", error);
@@ -53,10 +51,7 @@ function Planner() {
 
     try {
       if (editingId) {
-        const response = await axios.put(
-          `https://death-star.onrender.com/agenda/${editingId}`,
-          newAppointment
-        );
+        const response = await api.put(`/agenda/${editingId}`, newAppointment);
         setAppointments(
           appointments.map((appointment) =>
             appointment._id === editingId ? response.data : appointment
@@ -64,10 +59,7 @@ function Planner() {
         );
         setEditingId(null);
       } else {
-        const response = await axios.post(
-          "https://death-star.onrender.com/agenda",
-          newAppointment
-        );
+        const response = await api.post("/agenda", newAppointment);
         setAppointments([...appointments, response.data]);
       }
 
@@ -87,7 +79,7 @@ function Planner() {
   const handleDelete = async (id) => {
     try {
       console.log("Excluindo agendamento com ID:", id);
-      await axios.delete(`https://death-star.onrender.com/agenda/${id}`);
+      await api.delete(`/agenda/${id}`);
       setAppointments(
         appointments.filter((appointment) => appointment._id !== id)
       );

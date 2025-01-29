@@ -6,7 +6,6 @@ const api = axios.create({
   baseURL: "https://death-star.onrender.com",
 });
 
-
 if (token) {
   api.defaults.headers["Authorization"] = `Bearer ${token}`;
 }
