@@ -4,19 +4,16 @@ import Home from "./routes/Home";
 import Login from "./routes/Login";
 import reportWebVitals from "./reportWebVitals";
 import { createGlobalStyle } from "styled-components";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import Product from "./routes/Products";
 import Anamneses from "./routes/Anamneses";
 import Planner from "./routes/Planner";
 import { login } from "./services/login";
 import ProtectedRoute from "./utils/auth";
+import { LoadingProvider, useLoading } from "./components/LoadingProvider";
+import Loader from "./components/Loader";
+import { setAxiosLoadingInterceptor } from "./services/api";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -163,6 +160,11 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { setLoading } = useLoading();
+
+  useEffect(() => {
+    setAxiosLoadingInterceptor(setLoading);
+  }, [setLoading]);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -179,9 +181,12 @@ const App = () => {
   }, [navigate, location.pathname]);
 
   const handleLogin = async ({ email, password }) => {
+    setLoading(true);
     const token = await login({ email, password });
+    setLoading(false);
+
     if (token) {
-      localStorage.setItem("authToken", token); 
+      localStorage.setItem("authToken", token);
       setIsLoggedIn(true);
       navigate("/");
     } else {
@@ -193,24 +198,13 @@ const App = () => {
     <div>
       <GlobalStyle />
       {location.pathname !== "/login" && <Header />}
+      <Loader />
       <Routes>
         <Route path="/login" element={<Login handleLogin={handleLogin} />} />
-        <Route
-          path="/"
-          element={<ProtectedRoute element={<Home />} />}
-        />
-        <Route
-          path="/anamneses"
-          element={<ProtectedRoute element={<Anamneses />} />}
-        />
-        <Route
-          path="/produtos"
-          element={<ProtectedRoute element={<Product />} />}
-        />
-        <Route
-          path="/agenda"
-          element={<ProtectedRoute element={<Planner />} />}
-        />
+        <Route path="/" element={<ProtectedRoute element={<Home />} />} />
+        <Route path="/anamneses" element={<ProtectedRoute element={<Anamneses />} />} />
+        <Route path="/produtos" element={<ProtectedRoute element={<Product />} />} />
+        <Route path="/agenda" element={<ProtectedRoute element={<Planner />} />} />
       </Routes>
     </div>
   );
@@ -220,7 +214,9 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter basename="/millennium-falcon">
-      <App />
+      <LoadingProvider>
+        <App />
+      </LoadingProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
