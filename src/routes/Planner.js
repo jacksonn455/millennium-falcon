@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import api from "../services/api"; // Importando a instância de api configurada com o token
+import api from "../services/api";
 import Container from "../components/Container";
 import { Title, SectionTitle, AppointmentTitle } from "../components/Title";
 import { Button, ButtonGroup } from "../components/Button";
 import { Label } from "../components/Label";
 import { AnamneseInput } from "../components/Input";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import {
   AppContainer,
   AppointmentList,
@@ -22,6 +23,8 @@ function Planner() {
   const [status, setStatus] = useState("Pendente");
   const [appointments, setAppointments] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [appointmentToDelete, setAppointmentToDelete] = useState(null);
 
   useEffect(() => {
     async function fetchAppointments() {
@@ -76,17 +79,28 @@ function Planner() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
+    setAppointmentToDelete(id);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
     try {
-      console.log("Excluindo agendamento com ID:", id);
-      await api.delete(`/agenda/${id}`);
+      await api.delete(`/agenda/${appointmentToDelete}`);
       setAppointments(
-        appointments.filter((appointment) => appointment._id !== id)
+        appointments.filter(
+          (appointment) => appointment._id !== appointmentToDelete
+        )
       );
     } catch (error) {
       console.error("Erro ao excluir agendamento:", error);
       alert("Erro ao excluir agendamento.");
     }
+    setDeleteModalOpen(false);
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteModalOpen(false);
   };
 
   const handleEdit = (appointment) => {
@@ -240,6 +254,12 @@ function Planner() {
           ))}
         </AppointmentList>
       </Container>
+
+      <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </AppContainer>
   );
 }
