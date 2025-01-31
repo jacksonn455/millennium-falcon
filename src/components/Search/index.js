@@ -1,7 +1,8 @@
 import { Input } from "../Input";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { getPacientes } from "../../services/pacientes";
+// import { getPacientes } from "../../services/pacientes";
+
 
 const SearchContainer = styled.section`
   background-image: linear-gradient(90deg, rgb(244, 71, 149) 35%, #faaccc 165%);
@@ -77,13 +78,13 @@ function Search() {
   const [inputValue, setInputValue] = useState([]);
   const [pacientes, setPacientes] = useState([]);
 
-  useEffect(() => {
-    const fetchPacientes = async () => {
-      const pacientesAPI = await getPacientes();
-      setPacientes(pacientesAPI);
-    };
-    fetchPacientes();
-  }, []);
+  // useEffect(() => {
+  //   const fetchPacientes = async () => {
+  //     const pacientesAPI = await getPacientes(); // Desabilitando a requisição
+  //     setPacientes(pacientesAPI);
+  //   };
+  //   fetchPacientes();
+  // }, []);
 
   return (
     <SearchContainer>
