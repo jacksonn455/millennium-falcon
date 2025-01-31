@@ -33,7 +33,7 @@ export const setAxiosLoadingInterceptor = (setLoading, showError) => {
       if (error.response) {
         if (error.response.status === 401) {
           localStorage.removeItem("authToken");
-          window.location.href = "/login";
+          window.location.href = "/millennium-falcon/login";
         } else {
           showError(`Erro: ${error.response.status} - ${error.response.data.message || "Erro desconhecido"}`);
         }

@@ -4,7 +4,7 @@ const ProtectedRoute = ({ element }) => {
   const token = localStorage.getItem("authToken");
 
   if (!token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/millennium-falcon/login" replace />;
   }
 
   return element;
