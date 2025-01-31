@@ -14,6 +14,8 @@ import ProtectedRoute from "./utils/auth";
 import { LoadingProvider, useLoading } from "./components/LoadingProvider";
 import Loader from "./components/Loader";
 import { setAxiosLoadingInterceptor } from "./services/api";
+import { ErrorProvider, useError } from "./components/ErrorProvider";
+import ErrorAlert from "./components/ErrorAlert";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -33,127 +35,6 @@ const GlobalStyle = createGlobalStyle`
     height: 100%; 
     overflow-x: hidden; 
   }
-
-  li {
-    list-style: none;    
-  }
-
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    margin: 0;
-    font-weight: 600;
-  }
-
-  img {
-    max-width: 100%; 
-    height: auto;
-    display: block;
-  }
-
-  
-  @media (max-width: 768px) { 
-    body {
-      padding: 0;
-    }
-
-    h1 {
-      font-size: 24px; 
-    }
-
-    h2, h3 {
-      font-size: 20px;
-    }
-
-    h4, h5, h6 {
-      font-size: 18px;
-    }
-
-    .container {
-      padding: 10px;
-      width: 100%; 
-      overflow-x: hidden;
-    }
-
-    .header {
-      display: flex;
-      flex-direction: column;
-      padding: 10px;
-    }
-
-    .button {
-      font-size: 14px;
-      padding: 10px 15px;
-    }
-  }
-
-  @media (max-width: 480px) { 
-    body {
-      padding: 0;
-    }
-
-    * {
-        margin: 0;
-        box-sizing: border-box; 
-      }
-
-    h1 {
-      font-size: 20px; 
-    }
-
-    h2, h3 {
-      font-size: 18px;
-    }
-
-    h4, h5, h6 {
-      font-size: 16px;
-    }
-
-    p {
-      font-size: 14px;
-    }
-
-    .container {
-      padding: 8px;
-      width: 100%; 
-      max-width: 100%; 
-      overflow-x: hidden;
-    }
-
-    .header {
-      padding: 8px;
-      align-items: center; 
-    }
-
-    .logo {
-      width: 100px; 
-      margin: 0 auto;
-    }
-
-    .menu {
-      display: block;
-      padding: 10px 0;
-      font-size: 14px; 
-      text-align: center;
-    }
-
-    .button {
-      font-size: 12px;
-      padding: 10px 20px; 
-      width: 100%; 
-      max-width: 300px; 
-      margin: 10px auto; 
-      border-radius: 8px; 
-    }
-
-    img {
-      max-width: 100%; 
-      height: auto;
-    }
-  }
 `;
 
 const App = () => {
@@ -161,10 +42,11 @@ const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { setLoading } = useLoading();
+  const { showError } = useError();
 
   useEffect(() => {
-    setAxiosLoadingInterceptor(setLoading);
-  }, [setLoading]);
+    setAxiosLoadingInterceptor(setLoading, showError);
+  }, [setLoading, showError]);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -173,24 +55,26 @@ const App = () => {
       if (location.pathname === "/login") {
         navigate("/");
       }
-    } else {
-      if (location.pathname !== "/login") {
-        navigate("/login");
-      }
+    } else if (location.pathname !== "/login") {
+      navigate("/login");
     }
   }, [navigate, location.pathname]);
 
   const handleLogin = async ({ email, password }) => {
     setLoading(true);
-    const token = await login({ email, password });
-    setLoading(false);
-
-    if (token) {
-      localStorage.setItem("authToken", token);
-      setIsLoggedIn(true);
-      navigate("/");
-    } else {
-      alert("Erro ao fazer login. Tente novamente.");
+    try {
+      const token = await login({ email, password });
+      if (token) {
+        localStorage.setItem("authToken", token);
+        setIsLoggedIn(true);
+        navigate("/");
+      } else {
+        showError("Erro ao fazer login. Tente novamente.");
+      }
+    } catch (error) {
+      showError("Erro ao conectar com o servidor.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -199,6 +83,7 @@ const App = () => {
       <GlobalStyle />
       {location.pathname !== "/login" && <Header />}
       <Loader />
+      <ErrorAlert />
       <Routes>
         <Route path="/login" element={<Login handleLogin={handleLogin} />} />
         <Route path="/" element={<ProtectedRoute element={<Home />} />} />
@@ -215,7 +100,9 @@ root.render(
   <React.StrictMode>
     <BrowserRouter basename="/millennium-falcon">
       <LoadingProvider>
-        <App />
+        <ErrorProvider>
+          <App />
+        </ErrorProvider>
       </LoadingProvider>
     </BrowserRouter>
   </React.StrictMode>

@@ -1,10 +1,11 @@
 import axios from "axios";
+import { useError } from "../components/ErrorProvider";
 
 const api = axios.create({
   baseURL: "https://death-star.onrender.com",
 });
 
-export const setAxiosLoadingInterceptor = (setLoading) => {
+export const setAxiosLoadingInterceptor = (setLoading, showError) => {
   api.interceptors.request.use(
     (config) => {
       const token = localStorage.getItem("authToken");
@@ -28,10 +29,18 @@ export const setAxiosLoadingInterceptor = (setLoading) => {
     },
     (error) => {
       setLoading(false);
-      if (error.response && error.response.status === 401) {
-        localStorage.removeItem("authToken");
-        window.location.href = "/login";
+
+      if (error.response) {
+        if (error.response.status === 401) {
+          localStorage.removeItem("authToken");
+          window.location.href = "/login";
+        } else {
+          showError(`Erro: ${error.response.status} - ${error.response.data.message || "Erro desconhecido"}`);
+        }
+      } else {
+        showError("Erro ao conectar com o servidor.");
       }
+
       return Promise.reject(error);
     }
   );
