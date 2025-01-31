@@ -35,10 +35,12 @@ export const setAxiosLoadingInterceptor = (setLoading, showError) => {
           localStorage.removeItem("authToken");
           window.location.href = "/millennium-falcon/login";
         } else {
-          showError(`Erro: ${error.response.status} - ${error.response.data.message || "Erro desconhecido"}`);
+          showError(
+            `Ocorreu um erro (${error.response.status}): ${error.response.data.message || "Por favor, tente novamente mais tarde."}`
+          );
         }
       } else {
-        showError("Erro ao conectar com o servidor.");
+        showError("Não foi possível conectar ao servidor. Verifique sua conexão de internet e tente novamente.");
       }
 
       return Promise.reject(error);

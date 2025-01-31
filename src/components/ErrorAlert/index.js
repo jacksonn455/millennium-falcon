@@ -16,13 +16,15 @@ const Overlay = styled.div`
 `;
 
 const Modal = styled.div`
-  background: white;
+  background: #fce4ec;
+  color: #c2185b;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   max-width: 400px;
   text-align: center;
   position: relative;
+  border: 2px solid #c2185b;
 `;
 
 const CloseButton = styled.button`
@@ -32,7 +34,13 @@ const CloseButton = styled.button`
   background: none;
   border: none;
   font-size: 18px;
+  color: #c2185b;
   cursor: pointer;
+`;
+
+const Message = styled.p`
+  font-size: 16px;
+  margin-top: 10px;
 `;
 
 const ErrorAlert = () => {
@@ -49,7 +57,7 @@ const ErrorAlert = () => {
       <Modal>
         <CloseButton onClick={handleClose}>&times;</CloseButton>
         <h2>Erro</h2>
-        <p>{error}</p>
+        <Message>{error}</Message>
       </Modal>
     </Overlay>
   );
