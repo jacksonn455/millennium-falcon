@@ -1,22 +1,23 @@
 # Sistema de Gestão para Clínica de Estética
 
-Este repositório contém o código e os recursos de um sistema completo desenvolvido para uma clínica de estética. O objetivo principal é fornecer ferramentas eficientes para o gerenciamento de agendamentos, anamneses e produtos utilizados pelos pacientes.
+Este repositório contém o código e os recursos de um sistema completo desenvolvido para uma clínica de estética. O objetivo principal é fornecer ferramentas eficientes para o gerenciamento de agendamentos, anamneses e produtos utilizados na clínica.
 
 ### Funcionalidades Principais
-- **Sistema de Agendamento:** Interface amigável para clientes agendarem horários disponíveis.
+- **Sistema de Agendamento:** Interface amigável para agendar horários dos pacientes.
 - **Gestão de Anamneses:** Registro e consulta de informações detalhadas sobre os pacientes e seus históricos de atendimento.
-- **Controle de Produtos:** Gerenciamento de produtos utilizados durante os procedimentos, incluindo cadastro e consulta.
+- **Controle de Produtos:** Gerenciamento de produtos, incluindo cadastro, alteração e consulta.
 - **Integração com Google Calendar:** Sincronização automática de agendamentos para facilitar a organização da agenda.
 - **Design Responsivo:** Experiência de uso otimizada para dispositivos móveis, tablets e desktops.
 - **Componentes Reutilizáveis:** Utilização de React para maior modularidade e eficiência na manutenção do sistema.
 
 ### Tecnologias Utilizadas
-- **Frontend:**
+- **Frontend:** (em desenvolvimento)
   - React.js
   - Styled-Components para estilização
 - **Backend:** (em desenvolvimento)
   - Node.js / Express.js
-  - Banco de Dados SQL/NoSQL para armazenamento de dados
+  - Banco de Dados MongoDB
+  - Autenticação utilizando bcript e JWT
 - **Integrações:**
   - API do Google Calendar
 - **Ferramentas de Design:**
