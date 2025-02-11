@@ -58,7 +58,7 @@ const ConfirmDeleteModal = ({ isOpen, onCancel, onConfirm }) => {
     <Overlay>
       <Modal>
         <Title>Confirmar Exclusão</Title>
-        <p>Tem certeza que deseja excluir este agendamento?</p>
+        <p>Tem certeza que deseja excluir isso?</p>
         <ButtonGroup>
           <Button danger onClick={onConfirm}>Confirmar</Button>
           <Button onClick={onCancel}>Cancelar</Button>

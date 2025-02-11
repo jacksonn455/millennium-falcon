@@ -22,21 +22,36 @@ function Planner() {
   const [responsible, setResponsible] = useState("");
   const [status, setStatus] = useState("Pendente");
   const [appointments, setAppointments] = useState([]);
+  const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [appointmentToDelete, setAppointmentToDelete] = useState(null);
+  const [appointmentToDelete, setAppointmentToDelete] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     async function fetchAppointments() {
       try {
         const response = await api.get("/agenda");
         setAppointments(response.data);
+        setFilteredAppointments(response.data);
       } catch (error) {
         console.error("Erro ao buscar agendamentos:", error);
       }
     }
     fetchAppointments();
   }, []);
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value === "") {
+      setFilteredAppointments(appointments);
+    } else {
+      const filtered = appointments.filter((appointment) =>
+        appointment.paciente.toLowerCase().includes(e.target.value.toLowerCase())
+      );
+      setFilteredAppointments(filtered);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,10 +75,16 @@ function Planner() {
             appointment._id === editingId ? response.data : appointment
           )
         );
+        setFilteredAppointments(
+          filteredAppointments.map((appointment) =>
+            appointment._id === editingId ? response.data : appointment
+          )
+        );
         setEditingId(null);
       } else {
         const response = await api.post("/agenda", newAppointment);
         setAppointments([...appointments, response.data]);
+        setFilteredAppointments([...filteredAppointments, response.data]);
       }
 
       setDate("");
@@ -87,11 +108,8 @@ function Planner() {
   const handleConfirmDelete = async () => {
     try {
       await api.delete(`/agenda/${appointmentToDelete}`);
-      setAppointments(
-        appointments.filter(
-          (appointment) => appointment._id !== appointmentToDelete
-        )
-      );
+      setAppointments(appointments.filter((appointment) => appointment._id !== appointmentToDelete));
+      setFilteredAppointments(filteredAppointments.filter((appointment) => appointment._id !== appointmentToDelete));
     } catch (error) {
       console.error("Erro ao excluir agendamento:", error);
       alert("Erro ao excluir agendamento.");
@@ -218,9 +236,17 @@ function Planner() {
           </ButtonGroup>
         </form>
 
+        <SectionTitle>Buscar Paciente</SectionTitle>
+        <AnamneseInput
+          type="text"
+          value={searchTerm}
+          onChange={handleSearch}
+          placeholder="Buscar paciente por nome"
+        />
+
         <SectionTitle>Consultas Agendadas</SectionTitle>
         <AppointmentList>
-          {appointments.map((appointment) => (
+          {filteredAppointments.map((appointment) => (
             <AppointmentCard key={appointment._id}>
               <AppointmentTitle>
                 Consulta de {appointment.paciente}
