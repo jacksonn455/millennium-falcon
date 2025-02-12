@@ -7,11 +7,13 @@ import { Button, ButtonGroup } from "../components/Button";
 import { Label } from "../components/Label";
 import { AnamneseInput } from "../components/Input";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
+import { useLoading } from "../components/LoadingProvider";
 import {
   AppContainer,
   AppointmentList,
   AppointmentCard,
 } from "../components/Div";
+import Loader from "../components/Loader";
 
 function Planner() {
   const [date, setDate] = useState("");
@@ -28,6 +30,7 @@ function Planner() {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const { loading, setLoading } = useLoading();
 
   useEffect(() => {
     fetchAppointments();
@@ -123,8 +126,16 @@ function Planner() {
   const handleConfirmDelete = async () => {
     try {
       await api.delete(`/agenda/${appointmentToDelete}`);
-      setAppointments(appointments.filter((appointment) => appointment._id !== appointmentToDelete));
-      setFilteredAppointments(filteredAppointments.filter((appointment) => appointment._id !== appointmentToDelete));
+      setAppointments(
+        appointments.filter(
+          (appointment) => appointment._id !== appointmentToDelete
+        )
+      );
+      setFilteredAppointments(
+        filteredAppointments.filter(
+          (appointment) => appointment._id !== appointmentToDelete
+        )
+      );
     } catch (error) {
       console.error("Erro ao excluir agendamento:", error);
       alert("Erro ao excluir agendamento.");
@@ -280,7 +291,9 @@ function Planner() {
                   {appointment.responsible}
                 </p>
                 <ButtonGroup>
-                  <Button onClick={() => handleEdit(appointment)}>Editar</Button>
+                  <Button onClick={() => handleEdit(appointment)}>
+                    Editar
+                  </Button>
                   <Button onClick={() => handleDelete(appointment._id)}>
                     Excluir
                   </Button>
@@ -298,6 +311,7 @@ function Planner() {
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
       />
+      <Loader />
     </AppContainer>
   );
 }
