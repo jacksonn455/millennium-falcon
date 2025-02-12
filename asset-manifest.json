@@ -1,12 +1,9 @@
 {
   "files": {
     "main.css": "/millennium-falcon/static/css/main.a0976fbc.css",
-    "main.js": "/millennium-falcon/static/js/main.e09f6f19.js",
+    "main.js": "/millennium-falcon/static/js/main.8b4e262c.js",
     "static/js/453.43c721aa.chunk.js": "/millennium-falcon/static/js/453.43c721aa.chunk.js",
-    "static/media/caroline.jpg": "/millennium-falcon/static/media/caroline.1af5a6609e129781aff1.jpg",
-    "static/media/nagila.jpeg": "/millennium-falcon/static/media/nagila.a9459c68c46ffa227016.jpeg",
     "static/media/rosane.jpg": "/millennium-falcon/static/media/rosane.ec83495bf90dc4f14da4.jpg",
-    "static/media/jackson.jpeg": "/millennium-falcon/static/media/jackson.3724737840f04c13e023.jpeg",
     "static/media/maria.jpg": "/millennium-falcon/static/media/maria.c77d82b0a5fe75ee1345.jpg",
     "static/media/playwrite-in-latin-400-normal.woff": "/millennium-falcon/static/media/playwrite-in-latin-400-normal.7580fcf41307b7b8eee9.woff",
     "static/media/playwrite-in-latin-400-normal.woff2": "/millennium-falcon/static/media/playwrite-in-latin-400-normal.fb76c78a3828901f3c51.woff2",
@@ -27,11 +24,11 @@
     "index.html": "/millennium-falcon/index.html",
     "static/media/box-solid.svg": "/millennium-falcon/static/media/box-solid.2010fc76d8b5e1afcaaa94adca3a7945.svg",
     "main.a0976fbc.css.map": "/millennium-falcon/static/css/main.a0976fbc.css.map",
-    "main.e09f6f19.js.map": "/millennium-falcon/static/js/main.e09f6f19.js.map",
+    "main.8b4e262c.js.map": "/millennium-falcon/static/js/main.8b4e262c.js.map",
     "453.43c721aa.chunk.js.map": "/millennium-falcon/static/js/453.43c721aa.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a0976fbc.css",
-    "static/js/main.e09f6f19.js"
+    "static/js/main.8b4e262c.js"
   ]
 }
