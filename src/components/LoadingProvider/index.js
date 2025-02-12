@@ -1,5 +1,3 @@
-// src/components/LoadingProvider/index.js
-
 import { createContext, useContext, useState } from "react";
 
 const LoadingContext = createContext();
