@@ -109,9 +109,13 @@ function UsersActive() {
   }, []);
 
   const itemsPerPageAtendimentos = 3;
-  const totalPagesAtendimentos = Math.ceil(proximosAtendimentos.length / itemsPerPageAtendimentos);
+  const totalPagesAtendimentos = Math.ceil(
+    proximosAtendimentos.length / itemsPerPageAtendimentos
+  );
   const itemsPerPageProdutos = 3;
-  const totalPagesProdutos = Math.ceil(proximosProdutos.length / itemsPerPageProdutos);
+  const totalPagesProdutos = Math.ceil(
+    proximosProdutos.length / itemsPerPageProdutos
+  );
 
   const goToNextPageAtendimentos = () => {
     if (currentPageAtendimentos < totalPagesAtendimentos - 1) {
@@ -150,7 +154,9 @@ function UsersActive() {
   return (
     <UsersActiveContainer>
       {/* Parte dos atendimentos, como estava antes */}
-      <SectionTitle>Próximos atendimentos agendados</SectionTitle>
+      <SectionTitle>
+        Próximos atendimentos agendados do dia de hoje!
+      </SectionTitle>
       {proximosAtendimentos.length > 0 ? (
         <>
           <CarouselContainer>
@@ -171,11 +177,21 @@ function UsersActive() {
                         marginBottom: "10px",
                       }}
                     />
-                    <p><strong>{atendimento.paciente}</strong></p>
-                    <p><strong>Serviço:</strong> {atendimento.service}</p>
-                    <p><strong>Responsável:</strong> {atendimento.responsible}</p>
-                    <p><strong>Anotações:</strong> {atendimento.notes}</p>
-                    <p><strong>Horário:</strong> {atendimentoDate}</p>
+                    <p>
+                      <strong>{atendimento.paciente}</strong>
+                    </p>
+                    <p>
+                      <strong>Serviço:</strong> {atendimento.service}
+                    </p>
+                    <p>
+                      <strong>Responsável:</strong> {atendimento.responsible}
+                    </p>
+                    <p>
+                      <strong>Anotações:</strong> {atendimento.notes}
+                    </p>
+                    <p>
+                      <strong>Horário:</strong> {atendimentoDate}
+                    </p>
                   </AtendimentoCard>
                 </CarouselItem>
               );
@@ -202,10 +218,9 @@ function UsersActive() {
         </NoProdutosMessage>
       )}
 
-      {/* Carrossel de Produtos */}
+      <SectionTitle>Produtos Próximos ao Vencimento (6 meses )</SectionTitle>
       {proximosProdutos.length > 0 ? (
         <CardContainer>
-          <SectionTitle>Produtos Próximos ao Vencimento</SectionTitle>
           <CarouselContainer>
             {currentItemsProdutos.map((produto, index) => (
               <CarouselItem key={index}>
@@ -227,10 +242,16 @@ function UsersActive() {
             ))}
           </CarouselContainer>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <button onClick={goToPreviousPageProdutos} disabled={currentPageProdutos === 0}>
+            <button
+              onClick={goToPreviousPageProdutos}
+              disabled={currentPageProdutos === 0}
+            >
               Anterior
             </button>
-            <button onClick={goToNextPageProdutos} disabled={currentPageProdutos === totalPagesProdutos - 1}>
+            <button
+              onClick={goToNextPageProdutos}
+              disabled={currentPageProdutos === totalPagesProdutos - 1}
+            >
               Próximo
             </button>
           </div>

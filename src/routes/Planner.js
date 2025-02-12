@@ -263,7 +263,7 @@ function Planner() {
           placeholder="Buscar paciente por nome"
         />
 
-        <SectionTitle>Consultas Agendadas</SectionTitle>
+        <SectionTitle>Consultas Agendadas da Semana</SectionTitle>
         <AppointmentList>
           {filteredAppointments.length > 0 ? (
             filteredAppointments.map((appointment) => (
