@@ -9,22 +9,18 @@ export const fetchProducts = async () => {
   }
 };
 
-export const createProduct = async (product) => {
-  try {
-    const response = await api.post("/produtos", product);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+export const createProduct = async (productData) => {
+  const response = await api.post("/produtos", productData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
 };
 
-export const updateProduct = async (id, product) => {
-  try {
-    const response = await api.put(`/produtos/${id}`, product);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+export const updateProduct = async (id, productData) => {
+  const response = await api.put(`/produtos/${id}`, productData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
 };
 
 export const deleteProduct = async (id) => {

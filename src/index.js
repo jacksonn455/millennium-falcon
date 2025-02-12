@@ -6,7 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import { createGlobalStyle } from "styled-components";
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Header from "./components/Header";
-import Product from "./routes/Products";
+import ProductRoutes from "./routes/Products";
 import Anamneses from "./routes/Anamneses";
 import Planner from "./routes/Planner";
 import { login } from "./services/login";
@@ -16,6 +16,7 @@ import Loader from "./components/Loader";
 import { setAxiosLoadingInterceptor } from "./services/api";
 import { ErrorProvider, useError } from "./components/ErrorProvider";
 import ErrorAlert from "./components/ErrorAlert";
+import NotFound from "./components/NotFound"; 
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -88,8 +89,9 @@ const App = () => {
         <Route path="/login" element={<Login handleLogin={handleLogin} />} />
         <Route path="/" element={<ProtectedRoute element={<Home />} />} />
         <Route path="/anamneses" element={<ProtectedRoute element={<Anamneses />} />} />
-        <Route path="/produtos" element={<ProtectedRoute element={<Product />} />} />
+        <Route path="/produtos" element={<ProtectedRoute element={<ProductRoutes />} />} />
         <Route path="/agenda" element={<ProtectedRoute element={<Planner />} />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );

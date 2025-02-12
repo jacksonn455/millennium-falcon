@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
+import { getAgendamentos } from "../services/planner";
 import Container from "../components/Container";
 import { Title, SectionTitle, AppointmentTitle } from "../components/Title";
 import { Button, ButtonGroup } from "../components/Button";
@@ -29,28 +30,38 @@ function Planner() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    async function fetchAppointments() {
-      try {
-        const response = await api.get("/agenda");
-        setAppointments(response.data);
-        setFilteredAppointments(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar agendamentos:", error);
-      }
-    }
     fetchAppointments();
   }, []);
 
+  useEffect(() => {
+    if (searchTerm.length >= 3) {
+      searchAppointments(searchTerm);
+    } else {
+      setFilteredAppointments(appointments);
+    }
+  }, [searchTerm]);
+
+  const fetchAppointments = async () => {
+    try {
+      const appointmentsData = await getAgendamentos();
+      setAppointments(appointmentsData);
+      setFilteredAppointments(appointmentsData);
+    } catch (error) {
+      console.error("Erro ao buscar agendamentos:", error);
+    }
+  };
+
+  const searchAppointments = async (term) => {
+    try {
+      const response = await api.get(`/agenda?paciente=${term}`);
+      setFilteredAppointments(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar agendamentos:", error);
+    }
+  };
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    if (e.target.value === "") {
-      setFilteredAppointments(appointments);
-    } else {
-      const filtered = appointments.filter((appointment) =>
-        appointment.paciente.toLowerCase().includes(e.target.value.toLowerCase())
-      );
-      setFilteredAppointments(filtered);
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -87,17 +98,21 @@ function Planner() {
         setFilteredAppointments([...filteredAppointments, response.data]);
       }
 
-      setDate("");
-      setTime("");
-      setPaciente("");
-      setService("");
-      setContact("");
-      setNotes("");
-      setResponsible("");
-      setStatus("Pendente");
+      resetForm();
     } catch (error) {
       console.error("Erro ao criar/editar agendamento:", error);
     }
+  };
+
+  const resetForm = () => {
+    setDate("");
+    setTime("");
+    setPaciente("");
+    setService("");
+    setContact("");
+    setNotes("");
+    setResponsible("");
+    setStatus("Pendente");
   };
 
   const handleDelete = (id) => {
@@ -220,14 +235,7 @@ function Planner() {
               <Button
                 onClick={() => {
                   setEditingId(null);
-                  setDate("");
-                  setTime("");
-                  setService("");
-                  setPaciente("");
-                  setContact("");
-                  setNotes("");
-                  setResponsible("");
-                  setStatus("Pendente");
+                  resetForm();
                 }}
               >
                 Cancelar
@@ -246,38 +254,42 @@ function Planner() {
 
         <SectionTitle>Consultas Agendadas</SectionTitle>
         <AppointmentList>
-          {filteredAppointments.map((appointment) => (
-            <AppointmentCard key={appointment._id}>
-              <AppointmentTitle>
-                Consulta de {appointment.paciente}
-              </AppointmentTitle>
-              <p>
-                <strong>Data:</strong> {appointment.date}
-              </p>
-              <p>
-                <strong>Hora:</strong> {appointment.time}
-              </p>
-              <p>
-                <strong>Tipo de Serviço:</strong> {appointment.service}
-              </p>
-              <p>
-                <strong>Telefone/Contato:</strong> {appointment.contact}
-              </p>
-              <p>
-                <strong>Observações:</strong> {appointment.notes}
-              </p>
-              <p>
-                <strong>Profissional Responsável:</strong>{" "}
-                {appointment.responsible}
-              </p>
-              <ButtonGroup>
-                <Button onClick={() => handleEdit(appointment)}>Editar</Button>
-                <Button onClick={() => handleDelete(appointment._id)}>
-                  Excluir
-                </Button>
-              </ButtonGroup>
-            </AppointmentCard>
-          ))}
+          {filteredAppointments.length > 0 ? (
+            filteredAppointments.map((appointment) => (
+              <AppointmentCard key={appointment._id}>
+                <AppointmentTitle>
+                  Consulta de {appointment.paciente}
+                </AppointmentTitle>
+                <p>
+                  <strong>Data:</strong> {appointment.date}
+                </p>
+                <p>
+                  <strong>Hora:</strong> {appointment.time}
+                </p>
+                <p>
+                  <strong>Tipo de Serviço:</strong> {appointment.service}
+                </p>
+                <p>
+                  <strong>Telefone/Contato:</strong> {appointment.contact}
+                </p>
+                <p>
+                  <strong>Observações:</strong> {appointment.notes}
+                </p>
+                <p>
+                  <strong>Profissional Responsável:</strong>{" "}
+                  {appointment.responsible}
+                </p>
+                <ButtonGroup>
+                  <Button onClick={() => handleEdit(appointment)}>Editar</Button>
+                  <Button onClick={() => handleDelete(appointment._id)}>
+                    Excluir
+                  </Button>
+                </ButtonGroup>
+              </AppointmentCard>
+            ))
+          ) : (
+            <p>Nenhum agendamento encontrado no dia de hoje.</p>
+          )}
         </AppointmentList>
       </Container>
 
