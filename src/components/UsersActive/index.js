@@ -1,15 +1,26 @@
 import { useEffect, useState } from "react";
-import { CardRecomenda, getProximosProdutosVencimento } from "../Card";
+import { CardRecomenda } from "../Card";
 import BirthdayCard from "../BirthdayCard";
 import { birthdays } from "../BirthdayCard/dataBirthday";
 import img from "../../assets/images/estatistica.png";
 import { ProdutoTitulo, ProdutoDescricao } from "../Paragraph";
-import { ProdutoList, MessageCard, NewUsers, CardContainer } from "../Div";
+import { ProdutoList, CardContainer } from "../Div";
 import { UsersActiveContainer } from "../Section";
 import styled from "styled-components";
-import { ButtonHome } from "../Button";
 import dayjs from "dayjs";
 import api from "../../services/api";
+
+const NoProdutosMessage = styled.div`
+  background-color: #fff3f3;
+  color: #8b1e4d;
+  border: 1px solid #8b1e4d;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 15px;
+  margin-top: 20px;
+`;
 
 const ProfileImage = styled.img`
   width: 90px;
@@ -67,20 +78,11 @@ const AtendimentoCard = styled.div`
   }
 `;
 
-const NoAtendimentosMessage = styled.div`
-  background-color: #fff3f3;
-  color: #8b1e4d;
-  border: 1px solid #8b1e4d;
-  padding: 15px;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 18px;
-`;
-
 function UsersActive() {
   const [proximosAtendimentos, setProximosAtendimentos] = useState([]);
-  const proximosProdutos = getProximosProdutosVencimento();
-  const [currentPage, setCurrentPage] = useState(0);
+  const [proximosProdutos, setProximosProdutos] = useState([]);
+  const [currentPageAtendimentos, setCurrentPageAtendimentos] = useState(0);
+  const [currentPageProdutos, setCurrentPageProdutos] = useState(0);
 
   useEffect(() => {
     async function fetchAtendimentos() {
@@ -92,38 +94,70 @@ function UsersActive() {
         console.error("Erro ao buscar atendimentos", error);
       }
     }
+
+    async function fetchProdutos() {
+      try {
+        const response = await api.get("/produtos?validity=soon");
+        setProximosProdutos(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar produtos próximos ao vencimento", error);
+      }
+    }
+
+    fetchProdutos();
     fetchAtendimentos();
   }, []);
 
-  const itemsPerPage = 3;
-  const totalPages = Math.ceil(proximosAtendimentos.length / itemsPerPage);
+  const itemsPerPageAtendimentos = 3;
+  const totalPagesAtendimentos = Math.ceil(proximosAtendimentos.length / itemsPerPageAtendimentos);
+  const itemsPerPageProdutos = 3;
+  const totalPagesProdutos = Math.ceil(proximosProdutos.length / itemsPerPageProdutos);
 
-  const goToNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
+  const goToNextPageAtendimentos = () => {
+    if (currentPageAtendimentos < totalPagesAtendimentos - 1) {
+      setCurrentPageAtendimentos(currentPageAtendimentos + 1);
     }
   };
 
-  const goToPreviousPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
+  const goToPreviousPageAtendimentos = () => {
+    if (currentPageAtendimentos > 0) {
+      setCurrentPageAtendimentos(currentPageAtendimentos - 1);
     }
   };
 
-  const currentItems = proximosAtendimentos.slice(
-    currentPage * itemsPerPage,
-    (currentPage + 1) * itemsPerPage
+  const goToNextPageProdutos = () => {
+    if (currentPageProdutos < totalPagesProdutos - 1) {
+      setCurrentPageProdutos(currentPageProdutos + 1);
+    }
+  };
+
+  const goToPreviousPageProdutos = () => {
+    if (currentPageProdutos > 0) {
+      setCurrentPageProdutos(currentPageProdutos - 1);
+    }
+  };
+
+  const currentItemsAtendimentos = proximosAtendimentos.slice(
+    currentPageAtendimentos * itemsPerPageAtendimentos,
+    (currentPageAtendimentos + 1) * itemsPerPageAtendimentos
+  );
+
+  const currentItemsProdutos = proximosProdutos.slice(
+    currentPageProdutos * itemsPerPageProdutos,
+    (currentPageProdutos + 1) * itemsPerPageProdutos
   );
 
   return (
     <UsersActiveContainer>
+      {/* Parte dos atendimentos, como estava antes */}
       <SectionTitle>Próximos atendimentos agendados</SectionTitle>
-
       {proximosAtendimentos.length > 0 ? (
         <>
           <CarouselContainer>
-            {currentItems.map((atendimento, index) => {
-              const atendimentoDate = dayjs(`${atendimento.date} ${atendimento.time}`).format("DD/MM/YYYY HH:mm");
+            {currentItemsAtendimentos.map((atendimento, index) => {
+              const atendimentoDate = dayjs(
+                `${atendimento.date} ${atendimento.time}`
+              ).format("DD/MM/YYYY HH:mm");
               return (
                 <CarouselItem key={index}>
                   <AtendimentoCard>
@@ -148,68 +182,66 @@ function UsersActive() {
             })}
           </CarouselContainer>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <button onClick={goToPreviousPage} disabled={currentPage === 0}>
+            <button
+              onClick={goToPreviousPageAtendimentos}
+              disabled={currentPageAtendimentos === 0}
+            >
               Anterior
             </button>
-            <button onClick={goToNextPage} disabled={currentPage === totalPages - 1}>
+            <button
+              onClick={goToNextPageAtendimentos}
+              disabled={currentPageAtendimentos === totalPagesAtendimentos - 1}
+            >
               Próximo
             </button>
           </div>
         </>
       ) : (
-        <NoAtendimentosMessage>
+        <NoProdutosMessage>
           <p>Nenhum atendimento agendado para hoje.</p>
-        </NoAtendimentosMessage>
+        </NoProdutosMessage>
       )}
 
-      {/* Renderização dos produtos próximos ao vencimento */}
+      {/* Carrossel de Produtos */}
       {proximosProdutos.length > 0 ? (
         <CardContainer>
           <SectionTitle>Produtos Próximos ao Vencimento</SectionTitle>
-          <ProdutoList>
-            {proximosProdutos.map((produto) => (
-              <div
-                key={produto.id}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: "10px",
-                }}
-              >
-                <ProfileImage src={produto.src} alt={produto.nome} />
-                <div>
-                  <ProdutoTitulo>{produto.nome}</ProdutoTitulo>
-                  <ProdutoDescricao cor={produto.cor}>
-                    {produto.diasRestantes < 0 ? (
-                      <span>
-                        {Math.abs(produto.diasRestantes)} dias vencido
-                      </span>
-                    ) : (
-                      <span>{produto.diasRestantes} dias restantes</span>
-                    )}
+          <CarouselContainer>
+            {currentItemsProdutos.map((produto, index) => (
+              <CarouselItem key={index}>
+                <div style={{ textAlign: "center", margin: "0 10px" }}>
+                  <ProfileImage src={produto.image} alt={produto.name} />
+                  <ProdutoTitulo>{produto.name}</ProdutoTitulo>
+                  <ProdutoDescricao>
+                    <strong>Categoria:</strong> {produto.category}
                   </ProdutoDescricao>
-                  {produto.cor === "#D32F2F" && (
-                    <ProdutoDescricao cor={produto.cor}>
-                      <strong>Este produto já venceu!</strong>
-                    </ProdutoDescricao>
-                  )}
-                  {produto.cor === "#FFB300" && (
-                    <ProdutoDescricao cor={produto.cor}>
-                      <strong>Este produto está prestes a vencer!</strong>
-                    </ProdutoDescricao>
-                  )}
+                  <ProdutoDescricao>
+                    <strong>Preço:</strong> R${produto.price}
+                  </ProdutoDescricao>
+                  <ProdutoDescricao>
+                    <strong>Validade:</strong>{" "}
+                    {dayjs(produto.validity).format("DD/MM/YYYY")}
+                  </ProdutoDescricao>
                 </div>
-              </div>
+              </CarouselItem>
             ))}
-          </ProdutoList>
-          <ButtonHome>Veja Mais</ButtonHome>
+          </CarouselContainer>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <button onClick={goToPreviousPageProdutos} disabled={currentPageProdutos === 0}>
+              Anterior
+            </button>
+            <button onClick={goToNextPageProdutos} disabled={currentPageProdutos === totalPagesProdutos - 1}>
+              Próximo
+            </button>
+          </div>
         </CardContainer>
       ) : (
-        <MessageCard>
+        <NoProdutosMessage>
           <p>Nenhum produto próximo ao vencimento.</p>
-        </MessageCard>
+        </NoProdutosMessage>
       )}
 
+      {/* Outros componentes */}
       <BirthdayCard title="Aniversariantes do Mês" birthdays={birthdays} />
       <CardRecomenda
         titulo="Resumo Estatístico"
