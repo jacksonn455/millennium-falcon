@@ -301,7 +301,7 @@ function Planner() {
               </AppointmentCard>
             ))
           ) : (
-            <p>Nenhum agendamento encontrado no dia de hoje.</p>
+            <p>Nenhum agendamento encontrado nesta semana.</p>
           )}
         </AppointmentList>
       </Container>

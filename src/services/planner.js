@@ -1,10 +1,8 @@
 import api from "./api";
-import moment from "moment"; 
 
 async function getAgendamentos() {
   try {
-    const today = moment().format("YYYY-MM-DD");
-    const response = await api.get(`/agenda?date=${today}`);
+    const response = await api.get(`/agenda?week=true`);
     return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error("Erro ao buscar agendamentos:", error);
