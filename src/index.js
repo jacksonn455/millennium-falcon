@@ -51,15 +51,33 @@ const App = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
+
     if (token) {
-      setIsLoggedIn(true);
-      if (location.pathname === "/login") {
-        navigate("/");
+      const isTokenExpired = checkTokenExpiration(token);
+      if (isTokenExpired) {
+        localStorage.removeItem("authToken");
+        setIsLoggedIn(false);
+        navigate("/login");
+      } else {
+        setIsLoggedIn(true);
+        if (location.pathname === "/login") {
+          navigate("/");
+        }
       }
     } else if (location.pathname !== "/login") {
       navigate("/login");
     }
   }, [navigate, location.pathname]);
+
+  const checkTokenExpiration = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expiry = payload.exp * 1000;
+      return expiry < Date.now();
+    } catch (error) {
+      return true;
+    }
+  };
 
   const handleLogin = async ({ email, password }) => {
     setLoading(true);

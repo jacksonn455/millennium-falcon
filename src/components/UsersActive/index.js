@@ -64,7 +64,6 @@ const AtendimentoCard = styled.div`
   border-radius: 10px;
   padding: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 15px;
   text-align: center;
 
   p {
@@ -108,14 +107,11 @@ function UsersActive() {
     fetchAtendimentos();
   }, []);
 
-  const itemsPerPageAtendimentos = 3;
+  const itemsPerPage = 3;
   const totalPagesAtendimentos = Math.ceil(
-    proximosAtendimentos.length / itemsPerPageAtendimentos
+    proximosAtendimentos.length / itemsPerPage
   );
-  const itemsPerPageProdutos = 3;
-  const totalPagesProdutos = Math.ceil(
-    proximosProdutos.length / itemsPerPageProdutos
-  );
+  const totalPagesProdutos = Math.ceil(proximosProdutos.length / itemsPerPage);
 
   const goToNextPageAtendimentos = () => {
     if (currentPageAtendimentos < totalPagesAtendimentos - 1) {
@@ -142,75 +138,73 @@ function UsersActive() {
   };
 
   const currentItemsAtendimentos = proximosAtendimentos.slice(
-    currentPageAtendimentos * itemsPerPageAtendimentos,
-    (currentPageAtendimentos + 1) * itemsPerPageAtendimentos
+    currentPageAtendimentos * itemsPerPage,
+    (currentPageAtendimentos + 1) * itemsPerPage
   );
-
   const currentItemsProdutos = proximosProdutos.slice(
-    currentPageProdutos * itemsPerPageProdutos,
-    (currentPageProdutos + 1) * itemsPerPageProdutos
+    currentPageProdutos * itemsPerPage,
+    (currentPageProdutos + 1) * itemsPerPage
   );
 
   return (
     <UsersActiveContainer>
-      {/* Parte dos atendimentos, como estava antes */}
-      <SectionTitle>
-        Próximos atendimentos agendados do dia de hoje!
-      </SectionTitle>
+      <SectionTitle>Seus atendimentos agendados para hoje</SectionTitle>
       {proximosAtendimentos.length > 0 ? (
         <>
           <CarouselContainer>
-            {currentItemsAtendimentos.map((atendimento, index) => {
-              const atendimentoDate = dayjs(
-                `${atendimento.date} ${atendimento.time}`
-              ).format("DD/MM/YYYY HH:mm");
-              return (
-                <CarouselItem key={index}>
-                  <AtendimentoCard>
-                    <img
-                      src={require("../../assets/images/user.png")}
-                      alt={atendimento.paciente}
-                      style={{
-                        width: "200px",
-                        height: "200px",
-                        borderRadius: "50%",
-                        marginBottom: "10px",
-                      }}
-                    />
-                    <p>
-                      <strong>{atendimento.paciente}</strong>
-                    </p>
-                    <p>
-                      <strong>Serviço:</strong> {atendimento.service}
-                    </p>
-                    <p>
-                      <strong>Responsável:</strong> {atendimento.responsible}
-                    </p>
-                    <p>
-                      <strong>Anotações:</strong> {atendimento.notes}
-                    </p>
-                    <p>
-                      <strong>Horário:</strong> {atendimentoDate}
-                    </p>
-                  </AtendimentoCard>
-                </CarouselItem>
-              );
-            })}
+            {currentItemsAtendimentos.map((atendimento, index) => (
+              <CarouselItem key={index}>
+                <AtendimentoCard>
+                  <img
+                    src={require("../../assets/images/user.png")}
+                    alt={atendimento.paciente}
+                    style={{
+                      width: "200px",
+                      height: "200px",
+                      borderRadius: "50%",
+                      marginBottom: "10px",
+                    }}
+                  />
+                  <p>
+                    <strong>{atendimento.paciente}</strong>
+                  </p>
+                  <p>
+                    <strong>Serviço:</strong> {atendimento.service}
+                  </p>
+                  <p>
+                    <strong>Responsável:</strong> {atendimento.responsible}
+                  </p>
+                  <p>
+                    <strong>Anotações:</strong> {atendimento.notes}
+                  </p>
+                  <p>
+                    <strong>Horário:</strong>{" "}
+                    {dayjs(`${atendimento.date} ${atendimento.time}`).format(
+                      "DD/MM/YYYY HH:mm"
+                    )}
+                  </p>
+                </AtendimentoCard>
+              </CarouselItem>
+            ))}
           </CarouselContainer>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <button
-              onClick={goToPreviousPageAtendimentos}
-              disabled={currentPageAtendimentos === 0}
-            >
-              Anterior
-            </button>
-            <button
-              onClick={goToNextPageAtendimentos}
-              disabled={currentPageAtendimentos === totalPagesAtendimentos - 1}
-            >
-              Próximo
-            </button>
-          </div>
+          {totalPagesAtendimentos > 1 && (
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <button
+                onClick={goToPreviousPageAtendimentos}
+                disabled={currentPageAtendimentos === 0}
+              >
+                Anterior
+              </button>
+              <button
+                onClick={goToNextPageAtendimentos}
+                disabled={
+                  currentPageAtendimentos === totalPagesAtendimentos - 1
+                }
+              >
+                Próximo
+              </button>
+            </div>
+          )}
         </>
       ) : (
         <NoProdutosMessage>
@@ -218,7 +212,7 @@ function UsersActive() {
         </NoProdutosMessage>
       )}
 
-      <SectionTitle>Produtos Próximos ao Vencimento (6 meses )</SectionTitle>
+      <SectionTitle>Produtos com validade próxima (6 meses)</SectionTitle>
       {proximosProdutos.length > 0 ? (
         <CardContainer>
           <CarouselContainer>
@@ -261,15 +255,7 @@ function UsersActive() {
           <p>Nenhum produto próximo ao vencimento.</p>
         </NoProdutosMessage>
       )}
-
-      {/* Outros componentes */}
-      <BirthdayCard title="Aniversariantes do Mês" birthdays={birthdays} />
-      <CardRecomenda
-        titulo="Resumo Estatístico"
-        subtitulo="Você tem 127 pacientes cadastrados"
-        descricao="Último cadastro realizado em 20/01/2025."
-        img={img}
-      />
+      <BirthdayCard title="Aniversariantes da Semana" birthdays={birthdays} />
     </UsersActiveContainer>
   );
 }
