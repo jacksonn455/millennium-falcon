@@ -11,7 +11,6 @@ const FooterContainer = styled.div`
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 1200px;
   box-sizing: border-box;
   position: relative;
   margin-left: auto;
@@ -20,10 +19,11 @@ const FooterContainer = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     text-align: center;
+    padding: 15px;
   }
 
   @media (max-width: 480px) {
-    padding: 15px;
+    padding: 10px;
   }
 `;
 
@@ -43,8 +43,12 @@ const FooterText = styled.p`
   margin: 5px 0;
   text-align: center;
 
-  @media (max-width: 480px) {
+  @media (max-width: 768px) {
     font-size: 16px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
   }
 `;
 

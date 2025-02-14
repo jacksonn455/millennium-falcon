@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { CardRecomenda } from "../Card";
 import BirthdayCard from "../BirthdayCard";
 import { birthdays } from "../BirthdayCard/dataBirthday";
-import img from "../../assets/images/estatistica.png";
 import { ProdutoTitulo, ProdutoDescricao } from "../Paragraph";
-import { ProdutoList, CardContainer } from "../Div";
+import { CardContainer } from "../Div";
 import { UsersActiveContainer } from "../Section";
 import styled from "styled-components";
 import dayjs from "dayjs";

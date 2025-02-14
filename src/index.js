@@ -46,8 +46,8 @@ const App = () => {
   const { showError } = useError();
 
   useEffect(() => {
-    setAxiosLoadingInterceptor(setLoading, showError, navigate);
-  }, [setLoading, showError, navigate]);
+    setAxiosLoadingInterceptor(setLoading, showError);
+  }, [setLoading, showError]);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
