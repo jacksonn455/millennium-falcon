@@ -1,11 +1,10 @@
 import axios from "axios";
-import { useError } from "../components/ErrorProvider";
 
 const api = axios.create({
   baseURL: "https://death-star.onrender.com",
 });
 
-export const setAxiosLoadingInterceptor = (setLoading, showError) => {
+export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
   api.interceptors.request.use(
     (config) => {
       const token = localStorage.getItem("authToken");
@@ -33,7 +32,7 @@ export const setAxiosLoadingInterceptor = (setLoading, showError) => {
       if (error.response) {
         if (error.response.status === 401) {
           localStorage.removeItem("authToken");
-          window.location.href = "/millennium-falcon/login";
+          navigate("/login");
         } else {
           showError(
             `Ocorreu um erro (${error.response.status}): ${error.response.data.message || "Por favor, tente novamente mais tarde."}`
