@@ -11,8 +11,11 @@ const FooterContainer = styled.div`
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   width: 100%;
+  max-width: 1200px;
   box-sizing: border-box;
   position: relative;
+  margin-left: auto;
+  margin-right: auto;
 
   @media (max-width: 768px) {
     flex-direction: column;
