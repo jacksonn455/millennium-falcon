@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Container from "../../components/Container";
 import { Title, SectionTitle } from "../../components/Title";
 import { Button, ButtonGroup } from "../../components/Button";
@@ -9,6 +9,62 @@ import { RadioGroup, RadioLabel, RadioInput } from "../../components/Radio";
 import { FormGroup } from "../../components/Form";
 
 const SecondPage = ({ nextPage, prevPage }) => {
+  const [formData, setFormData] = useState({
+    tabagista: "",
+    alcool: "",
+    covid: "",
+    sequelas: "",
+    alergias: "",
+    suplementacao: "",
+    suplementacaoDescricao: "",
+    refeicoes: "",
+    carne: "",
+    lanches: "",
+    refrigerante: "",
+    frutas: "",
+    leite: "",
+    madrugada: "",
+    ultimoHorario: "",
+    horarioDorme: "",
+    intolerancia: "",
+    melasma: "",
+    manchas: [],
+    linhas: [],
+    acne: "",
+    grau: "",
+    regiaoAcne: [],
+    cicatriz: "",
+    tipoCicatriz: [],
+    olheiras: "",
+    tipoOlheiras: [],
+  });
+
+  const handleChange = (e) => {
+    const { name, value, type } = e.target;
+
+    if (type === "radio" && name === "tabagista") {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value, // Apenas o valor string do radio button será salvo
+      }));
+    } else if (type === "radio") {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value, // Para outros radio buttons, salva o valor correto
+      }));
+    } else if (type === "checkbox") {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: e.target.checked, // Checkbox irá armazenar um valor booleano
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value, // Outros tipos de input, como TextArea, também são tratados aqui
+      }));
+    }
+  };
+
   return (
     <Container>
       <Title>Anamnese Facial - Parte 2</Title>
@@ -18,13 +74,34 @@ const SecondPage = ({ nextPage, prevPage }) => {
         <Label>Tabagista:</Label>
         <RadioGroup>
           <RadioLabel>
-            <RadioInput type="radio" name="tabagista" /> Sim
+            <RadioInput
+              type="radio"
+              name="tabagista"
+              value="sim"
+              checked={formData.tabagista === "sim"}
+              onChange={handleChange}
+            />{" "}
+            Sim
           </RadioLabel>
           <RadioLabel>
-            <RadioInput type="radio" name="tabagista" /> Não
+            <RadioInput
+              type="radio"
+              name="tabagista"
+              value="nao"
+              checked={formData.tabagista === "nao"}
+              onChange={handleChange}
+            />{" "}
+            Não
           </RadioLabel>
           <RadioLabel>
-            <RadioInput type="radio" name="tabagista" /> Passivo
+            <RadioInput
+              type="radio"
+              name="tabagista"
+              value="passivo"
+              checked={formData.tabagista === "passivo"}
+              onChange={handleChange}
+            />{" "}
+            Passivo
           </RadioLabel>
         </RadioGroup>
       </FormGroup>
@@ -188,12 +265,20 @@ const SecondPage = ({ nextPage, prevPage }) => {
 
       <FormGroup>
         <Label>Último horário da sua alimentação:</Label>
-        <AnamneseInput type="text" name="ultimoHorario" placeholder="Ex: 22:00" />
+        <AnamneseInput
+          type="text"
+          name="ultimoHorario"
+          placeholder="Ex: 22:00"
+        />
       </FormGroup>
 
       <FormGroup>
         <Label>Horário que você dorme:</Label>
-        <AnamneseInput type="text" name="horarioDorme" placeholder="Ex: 23:30" />
+        <AnamneseInput
+          type="text"
+          name="horarioDorme"
+          placeholder="Ex: 23:30"
+        />
       </FormGroup>
 
       <FormGroup>

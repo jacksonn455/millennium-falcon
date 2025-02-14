@@ -1,33 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Title } from "../Title";
-
-export const birthdays = [
-  {
-    nome: "João Silva",
-    birthday: "15/02/1990",
-    age: 35,
-    src: "https://randomuser.me/api/portraits/men/1.jpg",
-  },
-  {
-    nome: "Maria Oliveira",
-    birthday: "17/02/1985",
-    age: 40,
-    src: "https://randomuser.me/api/portraits/women/1.jpg",
-  },
-  {
-    nome: "Carlos Souza",
-    birthday: "19/02/1992",
-    age: 33,
-    src: "https://randomuser.me/api/portraits/men/2.jpg",
-  },
-  {
-    nome: "Ana Costa",
-    birthday: "20/02/1995",
-    age: 30,
-    src: "https://randomuser.me/api/portraits/women/2.jpg",
-  },
-];
+import api from "../../services/api";
 
 const CarouselContainer = styled.div`
   display: flex;
@@ -72,9 +46,7 @@ const BirthdayList = styled.div`
   padding: 0;
   margin: 20px 0;
   width: 100%;
-  margin-left: 0;
   @media (max-width: 768px) {
-    margin-left: 0;
     justify-content: center;
   }
 `;
@@ -89,22 +61,6 @@ const BirthdayItem = styled.div`
     width: 100%;
     justify-content: center;
     margin-bottom: 15px;
-  }
-`;
-
-const ProfileImage = styled.img`
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  margin-right: 15px;
-  @media (max-width: 768px) {
-    width: 75px;
-    height: 75px;
-  }
-
-  @media (max-width: 480px) {
-    width: 50px;
-    height: 50px;
   }
 `;
 
@@ -143,27 +99,31 @@ const PaginationButtons = styled.div`
 `;
 
 function BirthdayCard() {
-  const [currentPageAniversariantes, setCurrentPageAniversariantes] = useState(0);
+  const [birthdays, setBirthdays] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 2;
 
-  const totalPagesAniversariantes = Math.ceil(birthdays.length / itemsPerPage);
-
-  const goToNextPageAniversariantes = () => {
-    if (currentPageAniversariantes < totalPagesAniversariantes - 1) {
-      setCurrentPageAniversariantes(currentPageAniversariantes + 1);
+  useEffect(() => {
+    async function fetchBirthdays() {
+      try {
+        const response = await api.get("/pacientes?aniversariantesSemana=true");
+        setBirthdays(
+          response.data.map(({ nome, idade, dataNascimento }) => ({
+            nome,
+            idade,
+            dataNascimento: new Date(dataNascimento).toLocaleDateString(
+              "pt-BR"
+            ),
+          }))
+        );
+      } catch (error) {
+        setBirthdays([]);
+      }
     }
-  };
+    fetchBirthdays();
+  }, []);
 
-  const goToPreviousPageAniversariantes = () => {
-    if (currentPageAniversariantes > 0) {
-      setCurrentPageAniversariantes(currentPageAniversariantes - 1);
-    }
-  };
-
-  const currentItemsAniversariantes = birthdays.slice(
-    currentPageAniversariantes * itemsPerPage,
-    (currentPageAniversariantes + 1) * itemsPerPage
-  );
+  const totalPages = Math.ceil(birthdays.length / itemsPerPage);
 
   return (
     <div>
@@ -175,25 +135,26 @@ function BirthdayCard() {
             </Title>
             <CarouselContainer>
               <CarouselWrapper
-                style={{
-                  transform: `translateX(-${currentPageAniversariantes * 100}%)`,
-                }}
+                style={{ transform: `translateX(-${currentPage * 100}%)` }}
               >
-                {Array.from({ length: totalPagesAniversariantes }).map((_, pageIndex) => (
+                {Array.from({ length: totalPages }).map((_, pageIndex) => (
                   <CarouselItem key={pageIndex}>
                     <BirthdayList>
                       {birthdays
-                        .slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage)
+                        .slice(
+                          pageIndex * itemsPerPage,
+                          (pageIndex + 1) * itemsPerPage
+                        )
                         .map((birthday, index) => (
                           <BirthdayItem key={index}>
-                            <ProfileImage
-                              src={birthday.src}
-                              alt={birthday.nome}
-                            />
                             <InfoContainer>
                               <Name>{birthday.nome}</Name>
-                              <BirthdayDate>Idade: {birthday.age} anos</BirthdayDate>
-                              <BirthdayDate>Data de Nascimento: {birthday.birthday}</BirthdayDate>
+                              <BirthdayDate>
+                                Idade: {birthday.idade} anos
+                              </BirthdayDate>
+                              <BirthdayDate>
+                                Data de Nascimento: {birthday.dataNascimento}
+                              </BirthdayDate>
                             </InfoContainer>
                           </BirthdayItem>
                         ))}
@@ -203,18 +164,18 @@ function BirthdayCard() {
               </CarouselWrapper>
             </CarouselContainer>
           </Card>
-
-          {/* Botões de navegação com mais espaçamento */}
           <PaginationButtons>
             <button
-              onClick={goToPreviousPageAniversariantes}
-              disabled={currentPageAniversariantes === 0}
+              onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+              disabled={currentPage === 0}
             >
               Anterior
             </button>
             <button
-              onClick={goToNextPageAniversariantes}
-              disabled={currentPageAniversariantes === totalPagesAniversariantes - 1}
+              onClick={() =>
+                setCurrentPage(Math.min(totalPages - 1, currentPage + 1))
+              }
+              disabled={currentPage === totalPages - 1}
             >
               Próximo
             </button>

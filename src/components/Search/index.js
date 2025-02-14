@@ -1,8 +1,7 @@
 import { Input } from "../Input";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-// import { getPacientes } from "../../services/pacientes";
-
+import { getPacientes } from "../../services/pacientes";
 
 const SearchContainer = styled.section`
   background-image: linear-gradient(90deg, rgb(244, 71, 149) 35%, #faaccc 165%);
@@ -75,16 +74,24 @@ const Result = styled.div`
 `;
 
 function Search() {
-  const [inputValue, setInputValue] = useState([]);
+  const [inputValue, setInputValue] = useState("");
   const [pacientes, setPacientes] = useState([]);
 
-  // useEffect(() => {
-  //   const fetchPacientes = async () => {
-  //     const pacientesAPI = await getPacientes(); // Desabilitando a requisição
-  //     setPacientes(pacientesAPI);
-  //   };
-  //   fetchPacientes();
-  // }, []);
+  useEffect(() => {
+    const fetchPacientes = async () => {
+      if (inputValue.length >= 3) {
+        const pacientesAPI = await getPacientes(inputValue);
+        setPacientes(pacientesAPI);
+      } else {
+        setPacientes([]);
+      }
+    };
+
+    const timeoutId = setTimeout(fetchPacientes, 500);
+
+    return () => clearTimeout(timeoutId);
+
+  }, [inputValue]);
 
   return (
     <SearchContainer>
@@ -92,25 +99,19 @@ function Search() {
       <SubTitle>Encontre seu paciente em nossa plataforma</SubTitle>
       <Input
         placeholder="Busque o paciente pelo nome"
-        onBlur={(evento) => {
-          const textoDigitado = evento.target.value.trim();
-          if (textoDigitado === "") {
-            setInputValue([]);
-          } else {
-            const resultadoPesquisa = pacientes.filter((paciente) =>
-              paciente.nome.toLowerCase().includes(textoDigitado.toLowerCase())
-            );
-            setInputValue(resultadoPesquisa);
-          }
-        }}
+        value={inputValue}
+        onChange={(evento) => setInputValue(evento.target.value)}
       />
 
-      {inputValue.map((paciente) => (
+      {pacientes.map((paciente) => (
         <Result key={paciente.id || paciente.nome}>
-          {" "}
-          {}
           <p>{paciente.nome}</p>
-          <img src={paciente.src} alt={paciente.alt} />
+          {paciente.src && (
+            <img
+              src={paciente.src}
+              alt={paciente.alt || "Imagem do paciente"}
+            />
+          )}
         </Result>
       ))}
     </SearchContainer>

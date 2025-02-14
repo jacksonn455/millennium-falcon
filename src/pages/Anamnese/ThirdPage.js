@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { SignatureCanvasWrapper } from "../../components/SignatureCanvasWrapper";
 import Container from "../../components/Container";
 import { Title } from "../../components/Title";
@@ -16,11 +16,31 @@ import {
 } from "../../components/Div";
 import { FooterInput } from "../../components/Input";
 
-const ThirdPage = ({ nextPage, prevPage }) => {
+const ThirdPage = ({ nextPage, prevPage, setFormData, formData }) => {
   const signatureRef = useRef(null);
+  const [diagnostico, setDiagnostico] = useState(formData.diagnostico || "");
+  const [descricao, setDescricao] = useState(formData.descricao || "");
+  const [conduta, setConduta] = useState(formData.conduta || "");
+  const [valor, setValor] = useState(formData.valor || "");
+  const [termo1, setTermo1] = useState(formData.termo1 || false);
+  const [termo2, setTermo2] = useState(formData.termo2 || false);
 
   const clearSignature = () => {
     signatureRef.current.clear();
+  };
+
+  const handleNext = () => {
+    setFormData({
+      ...formData,
+      diagnostico,
+      descricao,
+      conduta,
+      valor,
+      termo1,
+      termo2,
+      assinatura: signatureRef.current.toDataURL(),
+    });
+    nextPage();
   };
 
   return (
@@ -29,27 +49,51 @@ const ThirdPage = ({ nextPage, prevPage }) => {
 
       <Section>
         <Label>Diagnóstico:</Label>
-        <AnamneseInput type="text" placeholder="Digite o diagnóstico" />
+        <AnamneseInput
+          type="text"
+          placeholder="Digite o diagnóstico"
+          value={diagnostico}
+          onChange={(e) => setDiagnostico(e.target.value)}
+        />
       </Section>
 
       <Section>
         <Label>Descrição:</Label>
-        <TextArea rows="4" placeholder="Descreva o tratamento"></TextArea>
+        <TextArea
+          rows="4"
+          placeholder="Descreva o tratamento"
+          value={descricao}
+          onChange={(e) => setDescricao(e.target.value)}
+        />
       </Section>
 
       <Section>
         <Label>Conduta:</Label>
-        <TextArea rows="4" placeholder="Descreva a conduta"></TextArea>
+        <TextArea
+          rows="4"
+          placeholder="Descreva a conduta"
+          value={conduta}
+          onChange={(e) => setConduta(e.target.value)}
+        />
       </Section>
 
       <Section>
         <Label>Valor do Tratamento:</Label>
-        <AnamneseInput type="text" placeholder="Digite o valor do tratamento" />
+        <AnamneseInput
+          type="text"
+          placeholder="Digite o valor do tratamento"
+          value={valor}
+          onChange={(e) => setValor(e.target.value)}
+        />
       </Section>
 
       <TermsContainer>
         <Term>
-          <Checkbox type="checkbox" />
+          <Checkbox
+            type="checkbox"
+            checked={termo1}
+            onChange={(e) => setTermo1(e.target.checked)}
+          />
           <span>
             Eu estou ciente e de acordo que não omiti nenhuma informação citada
             acima, declarando que todas as informações são reais e por conta e
@@ -57,7 +101,11 @@ const ThirdPage = ({ nextPage, prevPage }) => {
           </span>
         </Term>
         <Term>
-          <Checkbox type="checkbox" />
+          <Checkbox
+            type="checkbox"
+            checked={termo2}
+            onChange={(e) => setTermo2(e.target.checked)}
+          />
           <span>
             Eu autorizo e declaro concedido o uso da minha imagem, antes,
             durante e depois, por tempo indeterminado para finalidades de redes
@@ -82,7 +130,7 @@ const ThirdPage = ({ nextPage, prevPage }) => {
 
       <ButtonGroup>
         <Button onClick={prevPage}>Voltar</Button>
-        <Button onClick={nextPage}>Próximo</Button>
+        <Button onClick={handleNext}>Próximo</Button>
       </ButtonGroup>
     </Container>
   );
