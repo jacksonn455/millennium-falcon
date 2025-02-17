@@ -33,12 +33,12 @@ const FifthPage = ({ prevPage, submitForm, setFormData, formData }) => {
       preScheduling: preScheduling,
       scheduleTime: scheduleTime,
       contractSignatures: {
-        clientSignature: signatureRef1.current.toDataURL(), // Convertendo a assinatura para um formato que pode ser enviado
+        clientSignature: signatureRef1.current.toDataURL(),
         providerSignature: signatureRef2.current.toDataURL(),
       },
     };
     setFormData(updatedFormData);
-    submitForm(); // Enviar os dados do formulário
+    submitForm();
   };
 
   return (

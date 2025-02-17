@@ -45,22 +45,22 @@ const SecondPage = ({ nextPage, prevPage }) => {
     if (type === "radio" && name === "tabagista") {
       setFormData((prevState) => ({
         ...prevState,
-        [name]: value, // Apenas o valor string do radio button será salvo
+        [name]: value,
       }));
     } else if (type === "radio") {
       setFormData((prevState) => ({
         ...prevState,
-        [name]: value, // Para outros radio buttons, salva o valor correto
+        [name]: value,
       }));
     } else if (type === "checkbox") {
       setFormData((prevState) => ({
         ...prevState,
-        [name]: e.target.checked, // Checkbox irá armazenar um valor booleano
+        [name]: e.target.checked,
       }));
     } else {
       setFormData((prevState) => ({
         ...prevState,
-        [name]: value, // Outros tipos de input, como TextArea, também são tratados aqui
+        [name]: value,
       }));
     }
   };

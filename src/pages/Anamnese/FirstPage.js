@@ -25,7 +25,7 @@ const FirstPage = ({ nextPage, setFormData, formData }) => {
     endereco: "",
     escolaridade: "",
     estadoCivil: "",
-    fotos: null,
+    image: null,
     queixa: "",
     soubeDoTrabalho: "",
     inicioQueixa: "",
@@ -41,7 +41,10 @@ const FirstPage = ({ nextPage, setFormData, formData }) => {
     ansiedade: "",
     nervosismo: "",
     exercicio: "",
+    image: null,
   });
+
+  const [imagePreview, setImagePreview] = useState(formData.image || null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -74,10 +77,14 @@ const FirstPage = ({ nextPage, setFormData, formData }) => {
   };
 
   const handleFileChange = (e) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      fotos: e.target.files[0],
-    }));
+    const file = e.target.files[0];
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+      setFormData((prevData) => ({
+        ...prevData,
+        image: file,
+      }));
+    }
   };
 
   return (
@@ -185,10 +192,20 @@ const FirstPage = ({ nextPage, setFormData, formData }) => {
           placeholder="Digite o estado civil"
         />
       </FormGroup>
-      <FormGroup>
+       <FormGroup>
         <Label>Fotos da Paciente:</Label>
-        <AnamneseInput type="file" name="fotos" onChange={handleFileChange} />
+        <AnamneseInput type="file" name="image" onChange={handleFileChange} />
       </FormGroup>
+
+      {imagePreview && (
+        <div style={{ marginTop: "10px" }}>
+          <img
+            src={imagePreview}
+            alt="Prévia da Foto"
+            style={{ width: "150px", height: "150px", objectFit: "cover", borderRadius: "10px" }}
+          />
+        </div>
+      )}
 
       <SectionTitle>Primeira Consulta</SectionTitle>
       <FormGroup>

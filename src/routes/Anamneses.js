@@ -16,8 +16,11 @@ const Anamneses = () => {
   const submitForm = async () => {
     console.log("Dados enviados:", formData);
     try {
-      const response = await api.post("/pacientes", formData);
-      console.log('Formulário enviado com sucesso:', response.data);
+      const response = await api.post("/pacientes", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
     } catch (error) {
       console.error("Erro ao enviar dados:", error);
     }
