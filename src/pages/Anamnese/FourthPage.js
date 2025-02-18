@@ -43,13 +43,11 @@ const FourthPage = ({ nextPage, prevPage, setFormData, formData }) => {
       data: dates[index],
     }));
 
-    // Atualize o formData com as assinaturas e datas
     setFormData({
       ...formData,
       contratoAssinaturas,
     });
 
-    // Chame a próxima página
     nextPage();
   };
 

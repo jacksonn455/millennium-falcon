@@ -17,6 +17,7 @@ import { setAxiosLoadingInterceptor } from "./services/api";
 import { ErrorProvider, useError } from "./components/ErrorProvider";
 import ErrorAlert from "./components/ErrorAlert";
 import NotFound from "./components/NotFound"; 
+import Pacientes from "./routes/Pacientes";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -109,6 +110,7 @@ const App = () => {
         <Route path="/anamneses" element={<ProtectedRoute element={<Anamneses />} />} />
         <Route path="/produtos" element={<ProtectedRoute element={<ProductRoutes />} />} />
         <Route path="/agenda" element={<ProtectedRoute element={<Planner />} />} />
+        <Route path="/pacientes/:id" element={<ProtectedRoute element={<Pacientes />} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

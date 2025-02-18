@@ -1,6 +1,7 @@
 import { Input } from "../Input";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getPacientes } from "../../services/pacientes";
 
 const SearchContainer = styled.section`
@@ -40,19 +41,25 @@ const SubTitle = styled.h2`
 
 const Result = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 20px;
   cursor: pointer;
   width: 100%;
   max-width: 400px;
   margin: 10px auto;
+  border: 1px solid transparent;
+  transition: border 0.3s ease-in-out;
 
   p {
     width: 200px;
   }
   img {
-    width: 100px;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-left: 10px;
+    border-radius: 50%; /* Borda arredondada */
   }
 
   &:hover {
@@ -65,6 +72,7 @@ const Result = styled.div`
 
     img {
       width: 80px;
+      height: 80px;
     }
 
     p {
@@ -76,12 +84,18 @@ const Result = styled.div`
 function Search() {
   const [inputValue, setInputValue] = useState("");
   const [pacientes, setPacientes] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPacientes = async () => {
       if (inputValue.length >= 3) {
-        const pacientesAPI = await getPacientes(inputValue);
-        setPacientes(pacientesAPI);
+        try {
+          const pacientesAPI = await getPacientes(inputValue);
+          setPacientes(pacientesAPI || []);
+        } catch (error) {
+          console.error("Erro ao buscar pacientes:", error);
+          setPacientes([]);
+        }
       } else {
         setPacientes([]);
       }
@@ -90,8 +104,16 @@ function Search() {
     const timeoutId = setTimeout(fetchPacientes, 500);
 
     return () => clearTimeout(timeoutId);
-
   }, [inputValue]);
+
+  const handlePacienteClick = (id) => {
+    if (!id) {
+      console.error("ID do paciente está indefinido.");
+      return;
+    }
+    console.log("Redirecionando para:", `/pacientes/${id}`);
+    navigate(`/pacientes/${id}`);
+  };
 
   return (
     <SearchContainer>
@@ -103,17 +125,21 @@ function Search() {
         onChange={(evento) => setInputValue(evento.target.value)}
       />
 
-      {pacientes.map((paciente) => (
-        <Result key={paciente.id || paciente.nome}>
-          <p>{paciente.nome}</p>
-          {paciente.src && (
-            <img
-              src={paciente.src}
-              alt={paciente.alt || "Imagem do paciente"}
-            />
-          )}
-        </Result>
-      ))}
+      {pacientes.length > 0 ? (
+        pacientes.map((paciente) => (
+          <Result
+            key={paciente._id || paciente.nome}
+            onClick={() => handlePacienteClick(paciente._id)}
+          >
+            <p>{paciente.nome}</p>
+            {paciente.image && (
+              <img src={paciente.image} alt={paciente.nome} />
+            )}
+          </Result>
+        ))
+      ) : (
+        inputValue.length >= 3 && <p>Nenhum paciente encontrado.</p>
+      )}
     </SearchContainer>
   );
 }
