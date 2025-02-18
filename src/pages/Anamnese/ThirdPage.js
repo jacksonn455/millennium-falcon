@@ -24,9 +24,15 @@ const ThirdPage = ({ nextPage, prevPage, setFormData, formData }) => {
   const [valor, setValor] = useState(formData.valor || "");
   const [termo1, setTermo1] = useState(formData.termo1 || false);
   const [termo2, setTermo2] = useState(formData.termo2 || false);
+  const [data, setData] = useState(formData.data || "");
 
   const clearSignature = () => {
     signatureRef.current.clear();
+  };
+
+  const formatDate = (input) => {
+    const match = input.match(/(\d{2})[\/\-]?(\d{2})[\/\-]?(\d{4})/);
+    return match ? `${match[3]}-${match[2]}-${match[1]}` : input;
   };
 
   const handleNext = () => {
@@ -38,6 +44,7 @@ const ThirdPage = ({ nextPage, prevPage, setFormData, formData }) => {
       valor,
       termo1,
       termo2,
+      data: formatDate(data),
       assinatura: signatureRef.current.toDataURL(),
     });
     nextPage();
@@ -117,7 +124,11 @@ const ThirdPage = ({ nextPage, prevPage, setFormData, formData }) => {
       <Footer>
         <FooterField>
           <Label>Data:</Label>
-          <FooterInput type="text" placeholder="dd / mm / aaaa" />
+          <FooterInput
+            type="date"
+            value={data}
+            onChange={(e) => setData(e.target.value)}
+          />
         </FooterField>
         <FooterField>
           <SignatureCanvasWrapper

@@ -29,11 +29,17 @@ const FourthPage = ({ nextPage, prevPage, setFormData, formData }) => {
   };
 
   const handleDateChange = (index, date) => {
+    const formattedDate = formatDate(date);
     setDates(prev => {
       const newDates = [...prev];
-      newDates[index] = date;
+      newDates[index] = formattedDate;
       return newDates;
     });
+  };
+
+  const formatDate = (date) => {
+    const parts = date.replace(/[^0-9]/g, "").match(/(\d{2})(\d{2})(\d{4})/);
+    return parts ? `${parts[3]}-${parts[2]}-${parts[1]}` : "";
   };
 
   const handleSave = () => {
@@ -60,8 +66,7 @@ const FourthPage = ({ nextPage, prevPage, setFormData, formData }) => {
             <TableCell key={`cell-1-${i}`}>
               <Label>Data</Label>
               <InputData
-                type="text"
-                placeholder="_ / _ / __"
+                type="date"
                 value={dates[i]}
                 onChange={(e) => handleDateChange(i, e.target.value)}
               />
@@ -80,8 +85,7 @@ const FourthPage = ({ nextPage, prevPage, setFormData, formData }) => {
             <TableCell key={`cell-2-${i}`}>
               <Label>Data</Label>
               <InputData
-                type="text"
-                placeholder="_ / _ / __"
+                type="date"
                 value={dates[4 + i]}
                 onChange={(e) => handleDateChange(4 + i, e.target.value)}
               />
@@ -100,8 +104,7 @@ const FourthPage = ({ nextPage, prevPage, setFormData, formData }) => {
             <TableCell key={`cell-3-${i}`}>
               <Label>Data</Label>
               <InputData
-                type="text"
-                placeholder="_ / _ / __"
+                type="date"
                 value={dates[8 + i]}
                 onChange={(e) => handleDateChange(8 + i, e.target.value)}
               />
