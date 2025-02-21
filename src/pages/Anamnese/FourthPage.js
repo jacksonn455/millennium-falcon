@@ -11,8 +11,8 @@ const FourthPage = ({ nextPage, prevPage, setFormData, formData }) => {
   const signatureRefs = useRef(
     Array.from({ length: 12 }, () => React.createRef())
   );
-  const [signatures, setSignatures] = useState(Array(12).fill(''));
-  const [dates, setDates] = useState(Array(12).fill(''));
+  const [signatures, setSignatures] = useState(Array(12).fill(""));
+  const [dates, setDates] = useState(Array(12).fill(""));
 
   const clearSignature = (index) => {
     if (signatureRefs.current[index]?.current) {
@@ -21,7 +21,7 @@ const FourthPage = ({ nextPage, prevPage, setFormData, formData }) => {
   };
 
   const handleSignatureChange = (index, signature) => {
-    setSignatures(prev => {
+    setSignatures((prev) => {
       const newSignatures = [...prev];
       newSignatures[index] = signature;
       return newSignatures;
@@ -29,17 +29,11 @@ const FourthPage = ({ nextPage, prevPage, setFormData, formData }) => {
   };
 
   const handleDateChange = (index, date) => {
-    const formattedDate = formatDate(date);
-    setDates(prev => {
+    setDates((prev) => {
       const newDates = [...prev];
-      newDates[index] = formattedDate;
+      newDates[index] = date;
       return newDates;
     });
-  };
-
-  const formatDate = (date) => {
-    const parts = date.replace(/[^0-9]/g, "").match(/(\d{2})(\d{2})(\d{4})/);
-    return parts ? `${parts[3]}-${parts[2]}-${parts[1]}` : "";
   };
 
   const handleSave = () => {

@@ -8,6 +8,7 @@ import { Label } from "../components/Label";
 import { AnamneseInput } from "../components/Input";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import { useLoading } from "../components/LoadingProvider";
+import { useError } from "../components/ErrorProvider";
 import {
   AppContainer,
   AppointmentList,
@@ -31,6 +32,7 @@ function Planner() {
   const [appointmentToDelete, setAppointmentToDelete] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const { loading, setLoading } = useLoading();
+  const { showError } = useError();
 
   useEffect(() => {
     fetchAppointments();
@@ -51,6 +53,7 @@ function Planner() {
       setFilteredAppointments(appointmentsData);
     } catch (error) {
       console.error("Erro ao buscar agendamentos:", error);
+      showError(error.response?.data?.message || "Erro ao buscar agendamentos.");
     }
   };
 
@@ -60,6 +63,7 @@ function Planner() {
       setFilteredAppointments(response.data);
     } catch (error) {
       console.error("Erro ao buscar agendamentos:", error);
+      showError(error.response?.data?.message || "Erro ao buscar agendamentos.");
     }
   };
 
@@ -69,44 +73,33 @@ function Planner() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const newAppointment = {
-      date,
-      time,
-      paciente,
-      service,
-      contact,
-      notes,
-      responsible,
-      status,
-    };
-
+  
+    const newAppointment = { date, time, paciente, service, contact, notes, responsible, status };
+  
     try {
       if (editingId) {
         const response = await api.put(`/agenda/${editingId}`, newAppointment);
-        setAppointments(
-          appointments.map((appointment) =>
-            appointment._id === editingId ? response.data : appointment
-          )
-        );
-        setFilteredAppointments(
-          filteredAppointments.map((appointment) =>
-            appointment._id === editingId ? response.data : appointment
-          )
-        );
+        setAppointments(appointments.map((appointment) =>
+          appointment._id === editingId ? response.data : appointment
+        ));
+        setFilteredAppointments(filteredAppointments.map((appointment) =>
+          appointment._id === editingId ? response.data : appointment
+        ));
         setEditingId(null);
       } else {
         const response = await api.post("/agenda", newAppointment);
         setAppointments([...appointments, response.data]);
         setFilteredAppointments([...filteredAppointments, response.data]);
       }
-
+  
       resetForm();
     } catch (error) {
       console.error("Erro ao criar/editar agendamento:", error);
+      const errorMessage = error.response?.data?.error || "Erro ao criar o agendamento.";
+      showError(errorMessage);
     }
   };
-
+  
   const resetForm = () => {
     setDate("");
     setTime("");
@@ -138,7 +131,7 @@ function Planner() {
       );
     } catch (error) {
       console.error("Erro ao excluir agendamento:", error);
-      alert("Erro ao excluir agendamento.");
+      showError(error.response?.data?.message || "Erro ao excluir agendamento.");
     }
     setDeleteModalOpen(false);
   };
@@ -291,12 +284,8 @@ function Planner() {
                   {appointment.responsible}
                 </p>
                 <ButtonGroup>
-                  <Button onClick={() => handleEdit(appointment)}>
-                    Editar
-                  </Button>
-                  <Button onClick={() => handleDelete(appointment._id)}>
-                    Excluir
-                  </Button>
+                  <Button onClick={() => handleEdit(appointment)}>Editar</Button>
+                  <Button onClick={() => handleDelete(appointment._id)}>Excluir</Button>
                 </ButtonGroup>
               </AppointmentCard>
             ))
