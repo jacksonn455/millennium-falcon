@@ -33,10 +33,11 @@ function Planner() {
   const [searchTerm, setSearchTerm] = useState("");
   const { loading, setLoading } = useLoading();
   const { showError } = useError();
+  const [currentWeek, setCurrentWeek] = useState(0);
 
   useEffect(() => {
-    fetchAppointments();
-  }, []);
+    fetchAppointments(currentWeek);
+  }, [currentWeek]);
 
   useEffect(() => {
     if (searchTerm.length >= 3) {
@@ -44,16 +45,18 @@ function Planner() {
     } else {
       setFilteredAppointments(appointments);
     }
-  }, [searchTerm]);
+  }, [searchTerm, appointments]);
 
-  const fetchAppointments = async () => {
+  const fetchAppointments = async (week) => {
     try {
-      const appointmentsData = await getAgendamentos();
-      setAppointments(appointmentsData);
-      setFilteredAppointments(appointmentsData);
+      const response = await api.get(`/agenda?week=${week}`);
+      setAppointments(response.data);
+      setFilteredAppointments(response.data);
     } catch (error) {
       console.error("Erro ao buscar agendamentos:", error);
-      showError(error.response?.data?.message || "Erro ao buscar agendamentos.");
+      showError(
+        error.response?.data?.message || "Erro ao buscar agendamentos."
+      );
     }
   };
 
@@ -63,7 +66,9 @@ function Planner() {
       setFilteredAppointments(response.data);
     } catch (error) {
       console.error("Erro ao buscar agendamentos:", error);
-      showError(error.response?.data?.message || "Erro ao buscar agendamentos.");
+      showError(
+        error.response?.data?.message || "Erro ao buscar agendamentos."
+      );
     }
   };
 
@@ -131,7 +136,9 @@ function Planner() {
       );
     } catch (error) {
       console.error("Erro ao excluir agendamento:", error);
-      showError(error.response?.data?.message || "Erro ao excluir agendamento.");
+      showError(
+        error.response?.data?.message || "Erro ao excluir agendamento."
+      );
     }
     setDeleteModalOpen(false);
   };
@@ -155,98 +162,7 @@ function Planner() {
   return (
     <AppContainer>
       <Container>
-        <Title>{editingId ? "Editar Consulta" : "Agendar Consulta"}</Title>
-
-        <SectionTitle>Detalhes do Agendamento</SectionTitle>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <Label>Data:</Label>
-            <AnamneseInput
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
-            />
-          </div>
-
-          <div>
-            <Label>Hora:</Label>
-            <AnamneseInput
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              required
-            />
-          </div>
-
-          <div>
-            <Label>Nome do Paciente:</Label>
-            <AnamneseInput
-              type="text"
-              value={paciente}
-              onChange={(e) => setPaciente(e.target.value)}
-              placeholder="Digite o nome do paciente"
-              required
-            />
-          </div>
-
-          <div>
-            <Label>Telefone ou Contato do Paciente:</Label>
-            <AnamneseInput
-              type="text"
-              value={contact}
-              onChange={(e) => setContact(e.target.value)}
-              placeholder="Digite o telefone ou contato"
-            />
-          </div>
-
-          <div>
-            <Label>Tipo de Serviço:</Label>
-            <AnamneseInput
-              type="text"
-              value={service}
-              onChange={(e) => setService(e.target.value)}
-              placeholder="Digite o tipo de serviço"
-              required
-            />
-          </div>
-
-          <div>
-            <Label>Observações ou Notas:</Label>
-            <AnamneseInput
-              type="text"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Observações sobre o paciente ou procedimento"
-            />
-          </div>
-
-          <div>
-            <Label>Profissional Responsável:</Label>
-            <AnamneseInput
-              type="text"
-              value={responsible}
-              onChange={(e) => setResponsible(e.target.value)}
-              placeholder="Nome do profissional responsável"
-            />
-          </div>
-
-          <ButtonGroup>
-            <Button type="submit">
-              {editingId ? "Salvar Alterações" : "Agendar"}
-            </Button>
-            {editingId && (
-              <Button
-                onClick={() => {
-                  setEditingId(null);
-                  resetForm();
-                }}
-              >
-                Cancelar
-              </Button>
-            )}
-          </ButtonGroup>
-        </form>
+        <Title>Consultas Agendadas</Title>
 
         <SectionTitle>Buscar Paciente</SectionTitle>
         <AnamneseInput
@@ -256,7 +172,7 @@ function Planner() {
           placeholder="Buscar paciente por nome"
         />
 
-        <SectionTitle>Consultas Agendadas da Semana</SectionTitle>
+        <SectionTitle>Agendamentos da Semana</SectionTitle>
         <AppointmentList>
           {filteredAppointments.length > 0 ? (
             filteredAppointments.map((appointment) => (
@@ -280,12 +196,15 @@ function Planner() {
                   <strong>Observações:</strong> {appointment.notes}
                 </p>
                 <p>
-                  <strong>Profissional Responsável:</strong>{" "}
-                  {appointment.responsible}
+                  <strong>Profissional Responsável:</strong> {appointment.responsible}
                 </p>
                 <ButtonGroup>
-                  <Button onClick={() => handleEdit(appointment)}>Editar</Button>
-                  <Button onClick={() => handleDelete(appointment._id)}>Excluir</Button>
+                  <Button onClick={() => handleEdit(appointment)}>
+                    Editar
+                  </Button>
+                  <Button onClick={() => handleDelete(appointment._id)}>
+                    Excluir
+                  </Button>
                 </ButtonGroup>
               </AppointmentCard>
             ))
@@ -293,6 +212,18 @@ function Planner() {
             <p>Nenhum agendamento encontrado nesta semana.</p>
           )}
         </AppointmentList>
+
+        <ButtonGroup>
+          <Button
+            onClick={() => setCurrentWeek((prev) => Math.max(prev - 1, 0))}
+            disabled={currentWeek === 0}
+          >
+            Semana Anterior
+          </Button>
+          <Button onClick={() => setCurrentWeek((prev) => prev + 1)}>
+            Próxima Semana
+          </Button>
+        </ButtonGroup>
       </Container>
 
       <ConfirmDeleteModal

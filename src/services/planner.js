@@ -1,12 +1,12 @@
 import api from "./api";
 
-async function getAgendamentos() {
+async function getAgendamentos(week = 0) {
   try {
-    const response = await api.get(`/agenda?week=true`);
-    return Array.isArray(response.data) ? response.data : [];
+    const response = await api.get(`/agenda?week=${week}`);
+    return response.data;
   } catch (error) {
     console.error("Erro ao buscar agendamentos:", error);
-    return [];
+    return { data: [], hasNext: false, hasPrev: false };
   }
 }
 
