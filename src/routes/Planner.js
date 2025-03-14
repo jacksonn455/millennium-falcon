@@ -3,7 +3,12 @@ import api from "../services/api";
 import { getAgendamentos } from "../services/planner";
 import Container from "../components/Container";
 import { Title, SectionTitle, AppointmentTitle } from "../components/Title";
-import { Button, ButtonGroup, ButtonGroupPage, ButtonPage } from "../components/Button";
+import {
+  Button,
+  ButtonGroup,
+  ButtonGroupPage,
+  ButtonPage,
+} from "../components/Button";
 import { Label } from "../components/Label";
 import { AnamneseInput } from "../components/Input";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
@@ -49,54 +54,53 @@ function Planner() {
     }
   }, [searchTerm, appointments]);
 
-  let controller = null; // Controlador para cancelar requisições pendentes
+  let controller = null;
 
-const fetchAppointments = async (pageNumber = 1) => {
-  setLoading(true);
+  const fetchAppointments = async (pageNumber = 1) => {
+    setLoading(true);
 
-  if (controller) {
-    controller.abort();
-  }
-  controller = new AbortController();
-  const signal = controller.signal;
-
-  try {
-    const response = await getAgendamentos(pageNumber, { signal });
-
-    if (response && response.data && response.pagination) {
-      setAppointments(response.data);
-      setFilteredAppointments(response.data);
-      setTotalPages(response.pagination.totalPages || 1);
-      setCurrentPage(response.pagination.currentPage || 1);
-    } else {
-      console.warn("Resposta da API não contém os dados esperados.");
+    if (controller) {
+      controller.abort();
     }
-  } catch (error) {
-    if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') {
-      console.warn("Requisição cancelada para evitar duplicação.");
-    } else {
-      console.error("Erro ao buscar agendamentos:", error);
-      showError(
-        error.response?.data?.message || "Erro ao buscar agendamentos."
-      );
+    controller = new AbortController();
+    const signal = controller.signal;
+
+    try {
+      const response = await getAgendamentos(pageNumber, { signal });
+
+      if (response && response.data && response.pagination) {
+        setAppointments(response.data);
+        setFilteredAppointments(response.data);
+        setTotalPages(response.pagination.totalPages || 1);
+        setCurrentPage(response.pagination.currentPage || 1);
+      } else {
+        console.warn("Resposta da API não contém os dados esperados.");
+      }
+    } catch (error) {
+      if (error.name === "CanceledError" || error.code === "ERR_CANCELED") {
+        console.warn("Requisição cancelada para evitar duplicação.");
+      } else {
+        console.error("Erro ao buscar agendamentos:", error);
+        showError(
+          error.response?.data?.message || "Erro ao buscar agendamentos."
+        );
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      fetchAppointments(currentPage + 1);
+    }
+  };
 
-const handleNextPage = () => {
-  if (currentPage < totalPages) {
-    fetchAppointments(currentPage + 1);
-  }
-};
-
-const handlePreviousPage = () => {
-  if (currentPage > 1) {
-    fetchAppointments(currentPage - 1);
-  }
-};
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      fetchAppointments(currentPage - 1);
+    }
+  };
 
   const searchAppointments = async (term) => {
     try {
@@ -131,21 +135,27 @@ const handlePreviousPage = () => {
     try {
       if (editingId) {
         const response = await api.put(`/agenda/${editingId}`, newAppointment);
-        setAppointments(
-          appointments.map((appointment) =>
+        setAppointments((prevAppointments) =>
+          prevAppointments.map((appointment) =>
             appointment._id === editingId ? response.data.data : appointment
           )
         );
-        setFilteredAppointments(
-          filteredAppointments.map((appointment) =>
+        setFilteredAppointments((prevFilteredAppointments) =>
+          prevFilteredAppointments.map((appointment) =>
             appointment._id === editingId ? response.data.data : appointment
           )
         );
         setEditingId(null);
       } else {
         const response = await api.post("/agenda", newAppointment);
-        setAppointments([...appointments, response.data.data]);
-        setFilteredAppointments([...filteredAppointments, response.data.data]);
+        setAppointments((prevAppointments) => [
+          ...prevAppointments,
+          response.data.data,
+        ]);
+        setFilteredAppointments((prevFilteredAppointments) => [
+          ...prevFilteredAppointments,
+          response.data.data,
+        ]);
       }
 
       resetForm();
@@ -318,60 +328,61 @@ const handlePreviousPage = () => {
         <SectionTitle>Agendamentos da Semana</SectionTitle>
         <AppointmentList>
           {filteredAppointments.length > 0 ? (
-            filteredAppointments.map((appointment) => (
-              <AppointmentCard key={appointment._id}>
-                <AppointmentTitle>
-                  Consulta de {appointment.paciente}
-                </AppointmentTitle>
-                <p>
-                  <strong>Data:</strong> {appointment.date}
-                </p>
-                <p>
-                  <strong>Hora:</strong> {appointment.time}
-                </p>
-                <p>
-                  <strong>Tipo de Serviço:</strong> {appointment.service}
-                </p>
-                <p>
-                  <strong>Telefone/Contato:</strong> {appointment.contact}
-                </p>
-                <p>
-                  <strong>Observações:</strong> {appointment.notes}
-                </p>
-                <p>
-                  <strong>Profissional Responsável:</strong>{" "}
-                  {appointment.responsible}
-                </p>
-                <ButtonGroup>
-                  <Button onClick={() => handleEdit(appointment)}>
-                    Editar
-                  </Button>
-                  <Button onClick={() => handleDelete(appointment._id)}>
-                    Excluir
-                  </Button>
-                </ButtonGroup>
-              </AppointmentCard>
-            ))
+            filteredAppointments.map((appointment) =>
+              appointment && appointment.paciente ? (
+                <AppointmentCard key={appointment._id}>
+                  <AppointmentTitle>
+                    Consulta de {appointment.paciente}
+                  </AppointmentTitle>
+                  <p>
+                    <strong>Data:</strong> {appointment.date}
+                  </p>
+                  <p>
+                    <strong>Hora:</strong> {appointment.time}
+                  </p>
+                  <p>
+                    <strong>Tipo de Serviço:</strong> {appointment.service}
+                  </p>
+                  <p>
+                    <strong>Telefone/Contato:</strong> {appointment.contact}
+                  </p>
+                  <p>
+                    <strong>Observações:</strong> {appointment.notes}
+                  </p>
+                  <p>
+                    <strong>Profissional Responsável:</strong>{" "}
+                    {appointment.responsible}
+                  </p>
+                  <ButtonGroup>
+                    <Button onClick={() => handleEdit(appointment)}>
+                      Editar
+                    </Button>
+                    <Button onClick={() => handleDelete(appointment._id)}>
+                      Excluir
+                    </Button>
+                  </ButtonGroup>
+                </AppointmentCard>
+              ) : null
+            )
           ) : (
             <p>Nenhum agendamento encontrado nesta semana.</p>
           )}
         </AppointmentList>
 
-
-          <ButtonGroupPage>
-            <ButtonPage onClick={handlePreviousPage} disabled={currentPage === 1}>
-              Anterior
-            </ButtonPage>
-            <span>
-              Página {currentPage} de {totalPages}
-            </span>
-            <ButtonPage
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-            >
-              Próxima
-            </ButtonPage>
-          </ButtonGroupPage>
+        <ButtonGroupPage>
+          <ButtonPage onClick={handlePreviousPage} disabled={currentPage === 1}>
+            Anterior
+          </ButtonPage>
+          <span>
+            Página {currentPage} de {totalPages}
+          </span>
+          <ButtonPage
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+          >
+            Próxima
+          </ButtonPage>
+        </ButtonGroupPage>
       </Container>
 
       <ConfirmDeleteModal
