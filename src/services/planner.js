@@ -1,14 +1,16 @@
 import api from "./api";
 
-async function getAgendamentos(week = 0) {
+async function getAgendamentos(pageNumber) {
   try {
-    const response = await api.get(`/agenda?week=${week}`);
+    const pageParam = pageNumber ? `?pageNumber=${pageNumber}` : "";
+    const response = await api.get(`/agenda${pageParam}`);
     return response.data;
   } catch (error) {
     console.error("Erro ao buscar agendamentos:", error);
     return { data: [], hasNext: false, hasPrev: false };
   }
 }
+
 
 async function createAgendamento(data) {
   try {

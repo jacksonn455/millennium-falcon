@@ -80,29 +80,35 @@ function UsersActive() {
   const [proximosProdutos, setProximosProdutos] = useState([]);
   const [currentPageAtendimentos, setCurrentPageAtendimentos] = useState(0);
   const [currentPageProdutos, setCurrentPageProdutos] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function fetchAtendimentos() {
       try {
         const dataAtual = dayjs().format("YYYY-MM-DD");
         const response = await api.get(`/agenda?date=${dataAtual}`);
-        setProximosAtendimentos(response.data);
+        setProximosAtendimentos(response.data.data);
       } catch (error) {
         console.error("Erro ao buscar atendimentos", error);
       }
     }
 
-    async function fetchProdutos() {
+    const fetchProdutos = async () => {
+      if (isLoading) return; 
+    
+      setIsLoading(true);
       try {
-        const response = await api.get("/produtos?validity=soon");
-        setProximosProdutos(response.data);
+        const response = await api.get('/produtos');
+        console.log(response.data);
       } catch (error) {
-        console.error("Erro ao buscar produtos próximos ao vencimento", error);
+        console.error('Erro ao buscar produtos:', error);
+      } finally {
+        setIsLoading(false);
       }
     }
 
-    fetchProdutos();
     fetchAtendimentos();
+    fetchProdutos();
   }, []);
 
   const itemsPerPage = 3;

@@ -3,7 +3,7 @@ import api from "../services/api";
 import { getAgendamentos } from "../services/planner";
 import Container from "../components/Container";
 import { Title, SectionTitle, AppointmentTitle } from "../components/Title";
-import { Button, ButtonGroup } from "../components/Button";
+import { Button, ButtonGroup, ButtonGroupPage, ButtonPage } from "../components/Button";
 import { Label } from "../components/Label";
 import { AnamneseInput } from "../components/Input";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
@@ -34,6 +34,8 @@ function Planner() {
   const { loading, setLoading } = useLoading();
   const { showError } = useError();
   const [currentWeek, setCurrentWeek] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     fetchAppointments(currentWeek);
@@ -47,23 +49,59 @@ function Planner() {
     }
   }, [searchTerm, appointments]);
 
-  const fetchAppointments = async (week) => {
-    try {
-      const response = await api.get(`/agenda?week=${week}`);
+  let controller = null; // Controlador para cancelar requisições pendentes
+
+const fetchAppointments = async (pageNumber = 1) => {
+  setLoading(true);
+
+  if (controller) {
+    controller.abort();
+  }
+  controller = new AbortController();
+  const signal = controller.signal;
+
+  try {
+    const response = await getAgendamentos(pageNumber, { signal });
+
+    if (response && response.data && response.pagination) {
       setAppointments(response.data);
       setFilteredAppointments(response.data);
-    } catch (error) {
+      setTotalPages(response.pagination.totalPages || 1);
+      setCurrentPage(response.pagination.currentPage || 1);
+    } else {
+      console.warn("Resposta da API não contém os dados esperados.");
+    }
+  } catch (error) {
+    if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') {
+      console.warn("Requisição cancelada para evitar duplicação.");
+    } else {
       console.error("Erro ao buscar agendamentos:", error);
       showError(
         error.response?.data?.message || "Erro ao buscar agendamentos."
       );
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+const handleNextPage = () => {
+  if (currentPage < totalPages) {
+    fetchAppointments(currentPage + 1);
+  }
+};
+
+const handlePreviousPage = () => {
+  if (currentPage > 1) {
+    fetchAppointments(currentPage - 1);
+  }
+};
 
   const searchAppointments = async (term) => {
     try {
       const response = await api.get(`/agenda?paciente=${term}`);
-      setFilteredAppointments(response.data);
+      setFilteredAppointments(response.data.data);
     } catch (error) {
       console.error("Erro ao buscar agendamentos:", error);
       showError(
@@ -78,33 +116,47 @@ function Planner() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    const newAppointment = { date, time, paciente, service, contact, notes, responsible, status };
-  
+
+    const newAppointment = {
+      date,
+      time,
+      paciente,
+      service,
+      contact,
+      notes,
+      responsible,
+      status,
+    };
+
     try {
       if (editingId) {
         const response = await api.put(`/agenda/${editingId}`, newAppointment);
-        setAppointments(appointments.map((appointment) =>
-          appointment._id === editingId ? response.data : appointment
-        ));
-        setFilteredAppointments(filteredAppointments.map((appointment) =>
-          appointment._id === editingId ? response.data : appointment
-        ));
+        setAppointments(
+          appointments.map((appointment) =>
+            appointment._id === editingId ? response.data.data : appointment
+          )
+        );
+        setFilteredAppointments(
+          filteredAppointments.map((appointment) =>
+            appointment._id === editingId ? response.data.data : appointment
+          )
+        );
         setEditingId(null);
       } else {
         const response = await api.post("/agenda", newAppointment);
-        setAppointments([...appointments, response.data]);
-        setFilteredAppointments([...filteredAppointments, response.data]);
+        setAppointments([...appointments, response.data.data]);
+        setFilteredAppointments([...filteredAppointments, response.data.data]);
       }
-  
+
       resetForm();
     } catch (error) {
       console.error("Erro ao criar/editar agendamento:", error);
-      const errorMessage = error.response?.data?.error || "Erro ao criar o agendamento.";
+      const errorMessage =
+        error.response?.data?.error || "Erro ao criar o agendamento.";
       showError(errorMessage);
     }
   };
-  
+
   const resetForm = () => {
     setDate("");
     setTime("");
@@ -287,7 +339,8 @@ function Planner() {
                   <strong>Observações:</strong> {appointment.notes}
                 </p>
                 <p>
-                  <strong>Profissional Responsável:</strong> {appointment.responsible}
+                  <strong>Profissional Responsável:</strong>{" "}
+                  {appointment.responsible}
                 </p>
                 <ButtonGroup>
                   <Button onClick={() => handleEdit(appointment)}>
@@ -304,17 +357,21 @@ function Planner() {
           )}
         </AppointmentList>
 
-        <ButtonGroup>
-          <Button
-            onClick={() => setCurrentWeek((prev) => Math.max(prev - 1, 0))}
-            disabled={currentWeek === 0}
-          >
-            Semana Anterior
-          </Button>
-          <Button onClick={() => setCurrentWeek((prev) => prev + 1)}>
-            Próxima Semana
-          </Button>
-        </ButtonGroup>
+
+          <ButtonGroupPage>
+            <ButtonPage onClick={handlePreviousPage} disabled={currentPage === 1}>
+              Anterior
+            </ButtonPage>
+            <span>
+              Página {currentPage} de {totalPages}
+            </span>
+            <ButtonPage
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Próxima
+            </ButtonPage>
+          </ButtonGroupPage>
       </Container>
 
       <ConfirmDeleteModal

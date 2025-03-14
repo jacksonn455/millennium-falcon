@@ -83,9 +83,10 @@ const App = () => {
   const handleLogin = async ({ email, password }) => {
     setLoading(true);
     try {
-      const token = await login({ email, password });
-      if (token) {
-        localStorage.setItem("authToken", token);
+      const { accessToken, refreshToken } = await login({ email, password });
+      if (accessToken) {
+        localStorage.setItem("authToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
         setIsLoggedIn(true);
         navigate("/");
       } else {
@@ -96,7 +97,7 @@ const App = () => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   return (
     <div>

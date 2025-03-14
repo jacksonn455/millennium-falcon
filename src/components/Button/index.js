@@ -1,5 +1,48 @@
 import styled from "styled-components";
 
+const ButtonGroupPage = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+  }
+`;
+
+const ButtonPage = styled.button`
+  padding: 12px 24px;
+  background: linear-gradient(45deg, #c7628f, #d883a3);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(45deg, #b0507e, #c7628f);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+`;
+
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: space-between;
@@ -90,4 +133,4 @@ const ButtonEstatistica = styled.button`
   }
 `;
 
-export { ButtonGroup, Button, ButtonHome, ButtonEstatistica };
+export { ButtonGroup, Button, ButtonHome, ButtonEstatistica, ButtonGroupPage, ButtonPage };
