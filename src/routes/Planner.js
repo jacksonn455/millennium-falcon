@@ -120,7 +120,7 @@ function Planner() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const newAppointment = {
       date,
       time,
@@ -131,10 +131,12 @@ function Planner() {
       responsible,
       status,
     };
-
+  
     try {
+      let response;
+  
       if (editingId) {
-        const response = await api.put(`/agenda/${editingId}`, newAppointment);
+        response = await api.put(`/agenda/${editingId}`, newAppointment);
         setAppointments((prevAppointments) =>
           prevAppointments.map((appointment) =>
             appointment._id === editingId ? response.data.data : appointment
@@ -145,9 +147,8 @@ function Planner() {
             appointment._id === editingId ? response.data.data : appointment
           )
         );
-        setEditingId(null);
       } else {
-        const response = await api.post("/agenda", newAppointment);
+        response = await api.post("/agenda", newAppointment);
         setAppointments((prevAppointments) => [
           ...prevAppointments,
           response.data.data,
@@ -157,7 +158,8 @@ function Planner() {
           response.data.data,
         ]);
       }
-
+  
+      fetchAppointments(currentPage);
       resetForm();
     } catch (error) {
       console.error("Erro ao criar/editar agendamento:", error);
@@ -165,7 +167,7 @@ function Planner() {
         error.response?.data?.error || "Erro ao criar o agendamento.";
       showError(errorMessage);
     }
-  };
+  };  
 
   const resetForm = () => {
     setDate("");
@@ -186,6 +188,7 @@ function Planner() {
   const handleConfirmDelete = async () => {
     try {
       await api.delete(`/agenda/${appointmentToDelete}`);
+      
       setAppointments(
         appointments.filter(
           (appointment) => appointment._id !== appointmentToDelete
@@ -196,6 +199,8 @@ function Planner() {
           (appointment) => appointment._id !== appointmentToDelete
         )
       );
+      
+      fetchAppointments(currentPage);
     } catch (error) {
       console.error("Erro ao excluir agendamento:", error);
       showError(
@@ -203,7 +208,7 @@ function Planner() {
       );
     }
     setDeleteModalOpen(false);
-  };
+  };  
 
   const handleCancelDelete = () => {
     setDeleteModalOpen(false);
