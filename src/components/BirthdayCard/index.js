@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Title } from "../Title";
+import { SectionTitle } from "../Title";
 import api from "../../services/api";
+import { UsersActiveContainer } from "../Section";
 
 const CarouselContainer = styled.div`
   display: flex;
@@ -118,6 +119,7 @@ function BirthdayCard() {
         );
       } catch (error) {
         setBirthdays([]);
+        console.error("Erro ao buscar aniversariantes:", error);
       }
     }
     fetchBirthdays();
@@ -127,12 +129,11 @@ function BirthdayCard() {
 
   return (
     <div>
+      <UsersActiveContainer>
+      <SectionTitle>Aniversariantes da Semana</SectionTitle>
       {birthdays.length > 0 ? (
         <>
           <Card>
-            <Title fontSize="16px" color="#A8235E" alignment="center">
-              Aniversariantes da Semana
-            </Title>
             <CarouselContainer>
               <CarouselWrapper
                 style={{ transform: `translateX(-${currentPage * 100}%)` }}
@@ -186,6 +187,7 @@ function BirthdayCard() {
           <p>Nenhum aniversariante nesta semana.</p>
         </NoProdutosMessage>
       )}
+      </UsersActiveContainer>
     </div>
   );
 }

@@ -129,19 +129,28 @@ function UsersActive() {
       }
     }
 
-    const fetchProdutos = async () => {
+    async function fetchProdutos() {
       if (isLoading) return;
-
+  
       setIsLoading(true);
       try {
-        const response = await api.get("/produtos");
-        console.log(response.data);
+        const response = await api.get("/produtos?validity=soon");
+        
+        const produtosValidos = response.data.filter((produto) => {
+          const validadeProduto = dayjs(produto.validity);
+          const hoje = dayjs();
+          const seisMesesDepois = hoje.add(6, 'months');
+          
+          return validadeProduto.isBefore(seisMesesDepois) && validadeProduto.isAfter(hoje);
+        });
+  
+        setProximosProdutos(produtosValidos);
       } catch (error) {
         console.error("Erro ao buscar produtos:", error);
       } finally {
         setIsLoading(false);
       }
-    };
+    }
 
     fetchAtendimentos();
     fetchProdutos();

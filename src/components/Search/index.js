@@ -111,7 +111,6 @@ function Search() {
       console.error("ID do paciente está indefinido.");
       return;
     }
-    console.log("Redirecionando para:", `/pacientes/${id}`);
     navigate(`/pacientes/${id}`);
   };
 

@@ -14,7 +14,6 @@ const Anamneses = () => {
   const prevPage = () => setCurrentPage((prevPage) => prevPage - 1);
 
   const submitForm = async () => {
-    console.log("Dados enviados:", formData);
     try {
       const response = await api.post("/pacientes", formData, {
         headers: {

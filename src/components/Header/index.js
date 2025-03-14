@@ -40,7 +40,9 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const MenuContainer = styled.div`
+const MenuContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isOpen',
+})`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,7 +55,7 @@ const MenuContainer = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     width: 100%;
-    display: ${(props) => (props.isOpen ? "flex" : "none")};
+    display: ${(props) => (props.isOpen ? 'flex' : 'none')};
     margin-top: 10px;
     background-color: ${colors.background};
     position: absolute;

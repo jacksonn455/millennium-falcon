@@ -12,7 +12,6 @@ export const login = async ({ email, password }) => {
 
     if (response.ok) {
       const { accessToken, refreshToken } = data;
-      console.log("Login bem-sucedido! Access Token recebido:", accessToken);
       localStorage.setItem("authToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       window.location.href = "/millennium-falcon/";
