@@ -63,15 +63,52 @@ const AtendimentoCard = styled.div`
   padding: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  max-width: 350px;
+  height: 450px;
+  overflow: hidden;
+
+  img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    object-fit: cover;
+  }
 
   p {
     color: #333;
     font-size: 16px;
     margin: 5px 0;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
   }
 
-  p strong {
-    color: #8b1e4d;
+  .content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+
+  .notes {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+  }
+
+  .footer {
+    margin-top: auto;
   }
 `;
 
@@ -94,18 +131,18 @@ function UsersActive() {
     }
 
     const fetchProdutos = async () => {
-      if (isLoading) return; 
-    
+      if (isLoading) return;
+
       setIsLoading(true);
       try {
-        const response = await api.get('/produtos');
+        const response = await api.get("/produtos");
         console.log(response.data);
       } catch (error) {
-        console.error('Erro ao buscar produtos:', error);
+        console.error("Erro ao buscar produtos:", error);
       } finally {
         setIsLoading(false);
       }
-    }
+    };
 
     fetchAtendimentos();
     fetchProdutos();
@@ -178,10 +215,12 @@ function UsersActive() {
                   <p>
                     <strong>Responsável:</strong> {atendimento.responsible}
                   </p>
-                  <p>
-                    <strong>Anotações:</strong> {atendimento.notes}
-                  </p>
-                  <p>
+                  <div className="content">
+                    <p className="notes">
+                      <strong>Anotações:</strong> {atendimento.notes}
+                    </p>
+                  </div>
+                  <p className="footer">
                     <strong>Horário:</strong>{" "}
                     {dayjs(`${atendimento.date} ${atendimento.time}`).format(
                       "DD/MM/YYYY HH:mm"
