@@ -122,8 +122,7 @@ function UsersActive() {
   useEffect(() => {
     async function fetchAtendimentos() {
       try {
-        const dataAtual = dayjs().format("YYYY-MM-DD");
-        const response = await api.get(`/agenda?date=${dataAtual}`);
+        const response = await api.get(`/agenda?nextAppointments=true`);
         setProximosAtendimentos(response.data.data);
       } catch (error) {
         console.error("Erro ao buscar atendimentos", error);
