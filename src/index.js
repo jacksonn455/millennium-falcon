@@ -4,7 +4,13 @@ import Home from "./routes/Home";
 import Login from "./routes/Login";
 import reportWebVitals from "./reportWebVitals";
 import { createGlobalStyle } from "styled-components";
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import Header from "./components/Header";
 import ProductRoutes from "./routes/Products";
 import Anamneses from "./routes/Anamneses";
@@ -13,11 +19,12 @@ import { login } from "./services/login";
 import ProtectedRoute from "./utils/auth";
 import { LoadingProvider, useLoading } from "./components/LoadingProvider";
 import Loader from "./components/Loader";
-import { setAxiosLoadingInterceptor } from "./services/api";
+import { setAxiosLoadingInterceptor, isTokenExpired } from "./services/api";
 import { ErrorProvider, useError } from "./components/ErrorProvider";
 import ErrorAlert from "./components/ErrorAlert";
-import NotFound from "./components/NotFound"; 
+import NotFound from "./components/NotFound";
 import Pacientes from "./routes/Pacientes";
+import { refreshAccessToken } from "./services/api";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -47,43 +54,49 @@ const App = () => {
   const { showError } = useError();
 
   useEffect(() => {
-    setAxiosLoadingInterceptor(setLoading, showError);
-  }, [setLoading, showError]);
+    setAxiosLoadingInterceptor(setLoading, showError, navigate);
+  }, [setLoading, showError, navigate]);
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const checkAuth = async () => {
+      const authToken = localStorage.getItem("authToken");
+      const refreshToken = localStorage.getItem("refreshToken");
 
-    if (token) {
-      const isTokenExpired = checkTokenExpiration(token);
-      if (isTokenExpired) {
-        localStorage.removeItem("authToken");
+      if (!authToken || !refreshToken) {
+        setIsLoggedIn(false);
+        navigate("/login");
+        return;
+      }
+
+      const isAuthTokenExpired = isTokenExpired(authToken);
+      const isRefreshTokenExpired = isTokenExpired(refreshToken);
+
+      if (isAuthTokenExpired && !isRefreshTokenExpired) {
+        const newToken = await refreshAccessToken();
+        if (newToken) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+          navigate("/login");
+        }
+      } else if (isRefreshTokenExpired) {
         setIsLoggedIn(false);
         navigate("/login");
       } else {
         setIsLoggedIn(true);
-        if (location.pathname === "/login") {
-          navigate("/");
-        }
       }
-    } else if (location.pathname !== "/login") {
-      navigate("/login");
-    }
-  }, [navigate, location.pathname]);
+    };
 
-  const checkTokenExpiration = (token) => {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const expiry = payload.exp * 1000;
-      return expiry < Date.now();
-    } catch (error) {
-      return true;
-    }
-  };
+    checkAuth();
+  }, [navigate, location.pathname]);
 
   const handleLogin = async ({ email, password }) => {
     setLoading(true);
     try {
-      const { accessToken, refreshToken } = await login({ email, password });
+      const { accessToken, refreshToken } = await login(
+        { email, password },
+        navigate
+      );
       if (accessToken) {
         localStorage.setItem("authToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
@@ -97,7 +110,7 @@ const App = () => {
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
   return (
     <div>
@@ -108,10 +121,22 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login handleLogin={handleLogin} />} />
         <Route path="/" element={<ProtectedRoute element={<Home />} />} />
-        <Route path="/anamneses" element={<ProtectedRoute element={<Anamneses />} />} />
-        <Route path="/produtos" element={<ProtectedRoute element={<ProductRoutes />} />} />
-        <Route path="/agenda" element={<ProtectedRoute element={<Planner />} />} />
-        <Route path="/pacientes/:id" element={<ProtectedRoute element={<Pacientes />} />} />
+        <Route
+          path="/anamneses"
+          element={<ProtectedRoute element={<Anamneses />} />}
+        />
+        <Route
+          path="/produtos"
+          element={<ProtectedRoute element={<ProductRoutes />} />}
+        />
+        <Route
+          path="/agenda"
+          element={<ProtectedRoute element={<Planner />} />}
+        />
+        <Route
+          path="/pacientes/:id"
+          element={<ProtectedRoute element={<Pacientes />} />}
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

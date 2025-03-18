@@ -1,4 +1,6 @@
-export const login = async ({ email, password }) => {
+import api from "./api";
+
+export const login = async ({ email, password }, navigate) => {
   try {
     const response = await fetch("https://death-star.onrender.com/auth/login", {
       method: "POST",
@@ -14,7 +16,8 @@ export const login = async ({ email, password }) => {
       const { accessToken, refreshToken } = data;
       localStorage.setItem("authToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-      window.location.href = "/millennium-falcon/";
+      api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+      navigate("/millennium-falcon/");
       return { accessToken, refreshToken };
     } else {
       alert(data.message || "Credenciais inválidas");

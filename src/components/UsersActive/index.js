@@ -197,7 +197,7 @@ function UsersActive() {
 
   return (
     <UsersActiveContainer>
-      <SectionTitle>Seus atendimentos agendados para hoje</SectionTitle>
+      <SectionTitle>Seus próximos atendimentos agendados para hoje</SectionTitle>
       {proximosAtendimentos.length > 0 ? (
         <>
           <CarouselContainer>
