@@ -1,5 +1,3 @@
-import api from "./api";
-
 export const login = async ({ email, password }, navigate) => {
   try {
     const response = await fetch("https://death-star.onrender.com/auth/login", {
@@ -10,22 +8,30 @@ export const login = async ({ email, password }, navigate) => {
       body: JSON.stringify({ email, password }),
     });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      const { accessToken, refreshToken } = data;
-      localStorage.setItem("authToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-      navigate("/millennium-falcon/");
-      return { accessToken, refreshToken };
-    } else {
-      alert(data.message || "Credenciais inválidas");
+    if (!response.ok) {
+      const errorData = await response.json();
+      alert(errorData.message || "Credenciais inválidas");
       return null;
     }
+
+    const { accessToken, refreshToken } = await response.json();
+
+    if (!accessToken || !refreshToken) {
+      alert("Erro inesperado. Por favor, tente novamente.");
+      return null;
+    }
+
+    localStorage.setItem("authToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
+
+    navigate("/millennium-falcon/");
+
+    return { accessToken, refreshToken };
   } catch (error) {
-    console.error("Erro ao tentar fazer login:", error);
-    alert("Erro ao tentar fazer login.");
+    console.error("❌ Erro ao tentar fazer login:", error);
+    alert(
+      "Erro ao tentar fazer login. Verifique sua conexão e tente novamente."
+    );
     return null;
   }
 };

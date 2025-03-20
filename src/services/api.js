@@ -7,7 +7,6 @@ const api = axios.create({
 const initialToken = localStorage.getItem("authToken");
 if (initialToken) {
   api.defaults.headers.common["Authorization"] = `Bearer ${initialToken}`;
-} else {
 }
 
 let isRefreshing = false;
@@ -17,18 +16,25 @@ const refreshAccessToken = async () => {
   if (isRefreshing) return refreshPromise;
 
   isRefreshing = true;
-
   const refreshToken = localStorage.getItem("refreshToken");
+
   if (!refreshToken) {
     isRefreshing = false;
     return null;
   }
 
   refreshPromise = api
-    .post("/auth/refresh", { refreshToken })
+    .post("/auth/refresh-token", { refreshToken })
     .then((response) => {
       if (response.status === 200) {
         const { accessToken, refreshToken: newRefreshToken } = response.data;
+
+        if (!accessToken || !newRefreshToken) {
+          console.warn("⚠️ Tokens ausentes na resposta da API.");
+          isRefreshing = false;
+          return null;
+        }
+
         localStorage.setItem("authToken", accessToken);
         localStorage.setItem("refreshToken", newRefreshToken);
         api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
@@ -38,11 +44,13 @@ const refreshAccessToken = async () => {
       return null;
     })
     .catch((error) => {
-      console.error("Erro ao renovar token:", error);
+      console.error("❌ Erro ao renovar token:", error.response?.data || error);
+
       if (error.response && error.response.status === 401) {
         localStorage.removeItem("authToken");
         localStorage.removeItem("refreshToken");
       }
+
       return null;
     })
     .finally(() => {
@@ -56,8 +64,7 @@ const refreshAccessToken = async () => {
 const isTokenExpired = (token) => {
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
-    const expiry = payload.exp * 1000;
-    return expiry < Date.now();
+    return payload.exp * 1000 < Date.now();
   } catch (error) {
     return true;
   }
@@ -67,26 +74,6 @@ export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
   api.interceptors.request.use(
     async (config) => {
       const authToken = localStorage.getItem("authToken");
-      const refreshToken = localStorage.getItem("refreshToken");
-
-      if (authToken && isTokenExpired(authToken)) {
-        if (refreshToken && !isTokenExpired(refreshToken)) {
-          const newToken = await refreshAccessToken();
-          if (newToken) {
-            config.headers["Authorization"] = `Bearer ${newToken}`;
-          } else {
-            localStorage.removeItem("authToken");
-            localStorage.removeItem("refreshToken");
-            navigate("/login");
-            return Promise.reject(new Error("Token expirado"));
-          }
-        } else {
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("refreshToken");
-          navigate("/login");
-          return Promise.reject(new Error("Refresh token expirado"));
-        }
-      }
 
       if (authToken) {
         config.headers["Authorization"] = `Bearer ${authToken}`;
@@ -113,30 +100,35 @@ export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
         const originalRequest = error.config;
 
         const refreshToken = localStorage.getItem("refreshToken");
-        const isRefreshTokenValid = !isTokenExpired(refreshToken);
 
-        if (isRefreshTokenValid && !originalRequest._retry) {
+        if (
+          refreshToken &&
+          !isTokenExpired(refreshToken) &&
+          !originalRequest._retry
+        ) {
           originalRequest._retry = true;
 
           const newToken = await refreshAccessToken();
+
           if (newToken) {
             originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
             return api(originalRequest);
           }
         }
+
         localStorage.removeItem("authToken");
         localStorage.removeItem("refreshToken");
         navigate("/login");
       } else if (error.response) {
         showError(
-          `Ocorreu um erro (${error.response.status}): ${
-            error.response.data.message ||
+          `⚠️ Erro (${error.response.status}): ${
+            error.response.data?.message ||
             "Por favor, tente novamente mais tarde."
           }`
         );
       } else {
         showError(
-          "Não foi possível conectar ao servidor. Verifique sua conexão de internet e tente novamente."
+          "❌ Não foi possível conectar ao servidor. Verifique sua conexão de internet."
         );
       }
 
