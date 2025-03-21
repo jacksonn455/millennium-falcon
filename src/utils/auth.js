@@ -78,7 +78,7 @@ const ProtectedRoute = ({ element }) => {
   let token = localStorage.getItem("authToken");
 
   if (!token) {
-    return <Navigate to="/millennium-falcon/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   try {
@@ -86,7 +86,7 @@ const ProtectedRoute = ({ element }) => {
     const currentTime = Date.now() / 1000;
 
     if (decodedToken.exp < currentTime) {
-      return <Navigate to="/millennium-falcon/login" replace />;
+      return <Navigate to="/login" replace />;
     } else {
       scheduleTokenRefresh(token);
     }
