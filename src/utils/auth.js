@@ -93,7 +93,7 @@ const ProtectedRoute = ({ element }) => {
   } catch (error) {
     console.error("❌ Token inválido:", error);
     clearTokens();
-    return <Navigate to="/millennium-falcon/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return element;
