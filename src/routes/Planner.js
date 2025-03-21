@@ -349,7 +349,7 @@ function Planner() {
         />
 
         <div>
-          <Label>Buscar por Data:</Label>
+          <SectionTitle>Buscar por Data:</SectionTitle>
           <AnamneseInput
             type="date"
             value={date}
@@ -358,7 +358,7 @@ function Planner() {
           <Button
             onClick={handleSearchDate}
             disabled={!date || loading}
-            style={{ marginTop: "10px" }}
+            style={{ marginTop: "20px" }}
           >
             {loading ? "Buscando..." : "Buscar"}
           </Button>
