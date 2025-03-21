@@ -25,6 +25,7 @@ import ErrorAlert from "./components/ErrorAlert";
 import NotFound from "./components/NotFound";
 import Pacientes from "./routes/Pacientes";
 import { refreshAccessToken } from "./services/api";
+import { logout } from "./services/auth";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -72,16 +73,14 @@ const App = () => {
       const isRefreshTokenExpired = isTokenExpired(refreshToken);
 
       if (isAuthTokenExpired && !isRefreshTokenExpired) {
-        const newToken = await refreshAccessToken();
+        const newToken = await refreshAccessToken(navigate);
         if (newToken) {
           setIsLoggedIn(true);
         } else {
-          setIsLoggedIn(false);
-          navigate("/login");
+          handleLogout();
         }
       } else if (isRefreshTokenExpired) {
-        setIsLoggedIn(false);
-        navigate("/login");
+        handleLogout();
       } else {
         setIsLoggedIn(true);
       }
@@ -93,11 +92,8 @@ const App = () => {
   const handleLogin = async ({ email, password }) => {
     setLoading(true);
     try {
-      const { accessToken, refreshToken } = await login(
-        { email, password },
-        navigate
-      );
-      if (accessToken) {
+      const { accessToken, refreshToken } = await login({ email, password }, navigate);
+      if (accessToken && refreshToken) {
         localStorage.setItem("authToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
         setIsLoggedIn(true);
@@ -112,31 +108,24 @@ const App = () => {
     }
   };
 
+  const handleLogout = () => {
+    logout(navigate);
+    setIsLoggedIn(false);
+  };
+
   return (
     <div>
       <GlobalStyle />
-      {location.pathname !== "/login" && <Header />}
+      {location.pathname !== "/login" && <Header handleLogout={handleLogout} />}
       <Loader />
       <ErrorAlert />
       <Routes>
         <Route path="/login" element={<Login handleLogin={handleLogin} />} />
         <Route path="/" element={<ProtectedRoute element={<Home />} />} />
-        <Route
-          path="/anamneses"
-          element={<ProtectedRoute element={<Anamneses />} />}
-        />
-        <Route
-          path="/produtos"
-          element={<ProtectedRoute element={<ProductRoutes />} />}
-        />
-        <Route
-          path="/agenda"
-          element={<ProtectedRoute element={<Planner />} />}
-        />
-        <Route
-          path="/pacientes/:id"
-          element={<ProtectedRoute element={<Pacientes />} />}
-        />
+        <Route path="/anamneses" element={<ProtectedRoute element={<Anamneses />} />} />
+        <Route path="/produtos" element={<ProtectedRoute element={<ProductRoutes />} />} />
+        <Route path="/agenda" element={<ProtectedRoute element={<Planner />} />} />
+        <Route path="/pacientes/:id" element={<ProtectedRoute element={<Pacientes />} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

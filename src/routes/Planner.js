@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ModalAgendamento from "../components/Modal";
 import api from "../services/api";
 import { getAgendamentos } from "../services/planner";
 import Container from "../components/Container";
@@ -41,6 +42,8 @@ function Planner() {
   const [currentWeek, setCurrentWeek] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchAppointments(currentWeek);
@@ -90,6 +93,21 @@ function Planner() {
     }
   };
 
+  const handleSearchDate = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get(`/agenda?date=${date}`);
+      console.log("Resposta da API:", response.data);
+      setAppointments(response.data.data || []);
+      setIsModalOpen(true);
+    } catch (err) {
+      setError("Erro ao buscar agendamentos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       fetchAppointments(currentPage + 1);
@@ -120,7 +138,7 @@ function Planner() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const newAppointment = {
       date,
       time,
@@ -131,10 +149,10 @@ function Planner() {
       responsible,
       status,
     };
-  
+
     try {
       let response;
-  
+
       if (editingId) {
         response = await api.put(`/agenda/${editingId}`, newAppointment);
         setAppointments((prevAppointments) =>
@@ -158,7 +176,7 @@ function Planner() {
           response.data.data,
         ]);
       }
-  
+
       fetchAppointments(currentPage);
       resetForm();
     } catch (error) {
@@ -167,7 +185,7 @@ function Planner() {
         error.response?.data?.error || "Erro ao criar o agendamento.";
       showError(errorMessage);
     }
-  };  
+  };
 
   const resetForm = () => {
     setDate("");
@@ -188,7 +206,7 @@ function Planner() {
   const handleConfirmDelete = async () => {
     try {
       await api.delete(`/agenda/${appointmentToDelete}`);
-      
+
       setAppointments(
         appointments.filter(
           (appointment) => appointment._id !== appointmentToDelete
@@ -199,7 +217,7 @@ function Planner() {
           (appointment) => appointment._id !== appointmentToDelete
         )
       );
-      
+
       fetchAppointments(currentPage);
     } catch (error) {
       console.error("Erro ao excluir agendamento:", error);
@@ -208,7 +226,7 @@ function Planner() {
       );
     }
     setDeleteModalOpen(false);
-  };  
+  };
 
   const handleCancelDelete = () => {
     setDeleteModalOpen(false);
@@ -329,6 +347,29 @@ function Planner() {
           onChange={handleSearch}
           placeholder="Buscar paciente por nome"
         />
+
+        <div>
+          <Label>Buscar por Data:</Label>
+          <AnamneseInput
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+          <Button
+            onClick={handleSearchDate}
+            disabled={!date || loading}
+            style={{ marginTop: "10px" }}
+          >
+            {loading ? "Buscando..." : "Buscar"}
+          </Button>
+          {error && <p style={{ color: "red" }}>{error}</p>}
+
+          <ModalAgendamento
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            agendamentos={appointments}
+          />
+        </div>
 
         <SectionTitle>Agendamentos da Semana</SectionTitle>
         <AppointmentList>
