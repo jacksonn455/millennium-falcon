@@ -29,9 +29,6 @@ const scheduleTokenRefresh = (accessToken, refreshToken) => {
     } else {
       refreshAccessToken();
     }
-
-    console.log(`⏳ Access token expira em ${Math.floor(accessExpiresIn)}s`);
-    console.log(`⏳ Refresh token expira em ${Math.floor(refreshExpiresIn)}s`);
   } catch (error) {
     console.error("❌ Erro ao decodificar token:", error);
     clearTokens();
