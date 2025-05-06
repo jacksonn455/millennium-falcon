@@ -24,7 +24,7 @@ import { ErrorProvider, useError } from "./components/ErrorProvider";
 import ErrorAlert from "./components/ErrorAlert";
 import NotFound from "./components/NotFound";
 import Pacientes from "./routes/Pacientes";
-import { refreshAccessToken } from "./services/api";
+import { refreshAccessToken } from "./utils/auth";
 import { logout } from "./services/auth";
 
 const GlobalStyle = createGlobalStyle`
@@ -77,7 +77,7 @@ const App = () => {
       }
 
       if (isAuthTokenExpired) {
-        const newToken = await refreshAccessToken(navigate);
+        const newToken = await refreshAccessToken();
         if (newToken) {
           localStorage.setItem("authToken", newToken);
           setIsLoggedIn(true);

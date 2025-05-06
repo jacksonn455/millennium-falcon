@@ -1,91 +1,104 @@
 import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
+import api from "../services/api";
 
-const API_URL = "https://death-star.onrender.com/auth/refresh-token";
-let refreshPromise = null;
 let refreshTimeout = null;
-
-const getNewAccessToken = async () => {
-  if (refreshPromise) return refreshPromise;
-
-  refreshPromise = (async () => {
-    try {
-      const storedRefreshToken = localStorage.getItem("refreshToken");
-      if (!storedRefreshToken)
-        throw new Error("Nenhum refreshToken encontrado.");
-
-      const response = await axios.post(
-        API_URL,
-        { refreshToken: storedRefreshToken },
-        { headers: { "Content-Type": "application/json" } }
-      );
-
-      const { accessToken, refreshToken: newRefreshToken } = response.data;
-      if (!accessToken) throw new Error("Nenhum accessToken recebido.");
-
-      localStorage.setItem("authToken", accessToken);
-      if (newRefreshToken) {
-        localStorage.setItem("refreshToken", newRefreshToken);
-      }
-
-      if (newRefreshToken) scheduleTokenRefresh(accessToken);
-      return accessToken;
-    } catch (error) {
-      console.error(
-        "❌ Erro ao renovar token:",
-        error.response?.data || error.message
-      );
-      clearTokens();
-      return null;
-    } finally {
-      refreshPromise = null;
-    }
-  })();
-
-  return refreshPromise;
-};
 
 const clearTokens = () => {
   localStorage.removeItem("authToken");
   localStorage.removeItem("refreshToken");
 };
 
-const scheduleTokenRefresh = (accessToken) => {
+const scheduleTokenRefresh = (accessToken, refreshToken) => {
   if (refreshTimeout) clearTimeout(refreshTimeout);
 
   try {
-    const decodedAccessToken = jwtDecode(accessToken);
-    const currentTime = Date.now() / 1000;
-    const expiresIn = decodedAccessToken.exp - currentTime;
+    const accessDecoded = jwtDecode(accessToken);
+    const refreshDecoded = jwtDecode(refreshToken);
 
-    if (expiresIn > 300) {
-      const refreshTime = (expiresIn - 300) * 1000;
-      refreshTimeout = setTimeout(getNewAccessToken, refreshTime);
+    const currentTime = Date.now() / 1000;
+    const accessExpiresIn = accessDecoded.exp - currentTime;
+    const refreshExpiresIn = refreshDecoded.exp - currentTime;
+
+    const accessBuffer = 60;
+    const refreshBuffer = 100;
+
+    if (accessExpiresIn > accessBuffer) {
+      const refreshTime = (accessExpiresIn - accessBuffer) * 1000;
+      refreshTimeout = setTimeout(refreshAccessToken, refreshTime);
     } else {
-      getNewAccessToken();
+      refreshAccessToken();
     }
+
+    console.log(`⏳ Access token expira em ${Math.floor(accessExpiresIn)}s`);
+    console.log(`⏳ Refresh token expira em ${Math.floor(refreshExpiresIn)}s`);
   } catch (error) {
-    console.error("❌ Erro ao decodificar accessToken:", error);
+    console.error("❌ Erro ao decodificar token:", error);
     clearTokens();
   }
 };
 
-const ProtectedRoute = ({ element }) => {
-  let token = localStorage.getItem("authToken");
+export const refreshAccessToken = async () => {
+  const refreshToken = localStorage.getItem("refreshToken");
+  if (!refreshToken) {
+    clearTokens();
+    return null;
+  }
 
+  try {
+    const decoded = jwtDecode(refreshToken);
+    const currentTime = Date.now() / 1000;
+    const refreshExpiresIn = decoded.exp - currentTime;
+    const refreshBuffer = 100;
+
+    const payload = { refreshToken };
+    if (refreshExpiresIn > refreshBuffer) {
+      payload.skipRefreshRenewal = true;
+    }
+
+    const response = await api.post("/auth/refresh-token", payload);
+    const { accessToken, refreshToken: newRefreshToken } = response.data;
+
+    if (accessToken) {
+      localStorage.setItem("authToken", accessToken);
+      api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+    }
+    if (newRefreshToken && refreshExpiresIn <= refreshBuffer) {
+      localStorage.setItem("refreshToken", newRefreshToken);
+    }
+
+    scheduleTokenRefresh(accessToken, refreshToken);
+    return accessToken;
+  } catch (error) {
+    console.error("❌ Erro ao renovar token:", error);
+    clearTokens();
+    return null;
+  }
+};
+
+export const initializeAuth = () => {
+  const accessToken = localStorage.getItem("authToken");
+  const refreshToken = localStorage.getItem("refreshToken");
+  if (accessToken && refreshToken) {
+    scheduleTokenRefresh(accessToken, refreshToken);
+  }
+};
+
+const ProtectedRoute = ({ element }) => {
+  const token = localStorage.getItem("authToken");
   if (!token) {
     return <Navigate to="/login" replace />;
   }
 
   try {
-    let decodedToken = jwtDecode(token);
+    const decoded = jwtDecode(token);
     const currentTime = Date.now() / 1000;
 
-    if (decodedToken.exp < currentTime) {
+    if (decoded.exp < currentTime) {
       return <Navigate to="/login" replace />;
     } else {
-      scheduleTokenRefresh(token);
+      const refreshToken = localStorage.getItem("refreshToken");
+      scheduleTokenRefresh(token, refreshToken);
     }
   } catch (error) {
     console.error("❌ Token inválido:", error);
@@ -94,14 +107,6 @@ const ProtectedRoute = ({ element }) => {
   }
 
   return element;
-};
-
-const initializeAuth = () => {
-  const token = localStorage.getItem("authToken");
-  if (token) {
-    scheduleTokenRefresh(token);
-  } else {
-  }
 };
 
 initializeAuth();
