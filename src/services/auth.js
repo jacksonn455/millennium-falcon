@@ -7,12 +7,11 @@ export const logout = async (navigate) => {
     if (refreshToken) {
       await api.post("/auth/logout", { refreshToken });
     }
-
+  } catch (error) {
+    console.error("❌ Erro ao fazer logout:", error);
+  } finally {
     localStorage.removeItem("authToken");
     localStorage.removeItem("refreshToken");
-
     navigate("/login");
-  } catch (error) {
-    console.error("❌ Erro ao fazer logout:", error.response?.data || error);
   }
 };
