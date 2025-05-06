@@ -51,26 +51,23 @@ const clearTokens = () => {
   localStorage.removeItem("refreshToken");
 };
 
-const scheduleTokenRefresh = (token) => {
+const scheduleTokenRefresh = (accessToken) => {
   if (refreshTimeout) clearTimeout(refreshTimeout);
 
   try {
-    const decodedToken = jwtDecode(token);
-
+    const decodedAccessToken = jwtDecode(accessToken);
     const currentTime = Date.now() / 1000;
-    const expiresIn = decodedToken.exp - currentTime;
+    const expiresIn = decodedAccessToken.exp - currentTime;
 
     if (expiresIn > 300) {
-      const refreshTime = expiresIn - 300;
-      refreshTimeout = setTimeout(getNewAccessToken, refreshTime * 1000);
+      const refreshTime = (expiresIn - 300) * 1000;
+      refreshTimeout = setTimeout(getNewAccessToken, refreshTime);
     } else {
       getNewAccessToken();
     }
   } catch (error) {
-    console.error(
-      "❌ Erro ao decodificar token para agendar renovação:",
-      error
-    );
+    console.error("❌ Erro ao decodificar accessToken:", error);
+    clearTokens();
   }
 };
 
