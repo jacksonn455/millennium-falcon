@@ -64,35 +64,41 @@ const App = () => {
       const refreshToken = localStorage.getItem("refreshToken");
 
       if (!authToken || !refreshToken) {
-        setIsLoggedIn(false);
-        navigate("/login");
+        handleLogout();
         return;
       }
 
       const isAuthTokenExpired = isTokenExpired(authToken);
       const isRefreshTokenExpired = isTokenExpired(refreshToken);
 
-      if (isAuthTokenExpired && !isRefreshTokenExpired) {
+      if (isRefreshTokenExpired) {
+        handleLogout();
+        return;
+      }
+
+      if (isAuthTokenExpired) {
         const newToken = await refreshAccessToken(navigate);
         if (newToken) {
+          localStorage.setItem("authToken", newToken);
           setIsLoggedIn(true);
         } else {
           handleLogout();
         }
-      } else if (isRefreshTokenExpired) {
-        handleLogout();
       } else {
         setIsLoggedIn(true);
       }
     };
 
     checkAuth();
-  }, [navigate, location.pathname]);
+  }, []);
 
   const handleLogin = async ({ email, password }) => {
     setLoading(true);
     try {
-      const { accessToken, refreshToken } = await login({ email, password }, navigate);
+      const { accessToken, refreshToken } = await login(
+        { email, password },
+        navigate
+      );
       if (accessToken && refreshToken) {
         localStorage.setItem("authToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
@@ -122,10 +128,22 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login handleLogin={handleLogin} />} />
         <Route path="/" element={<ProtectedRoute element={<Home />} />} />
-        <Route path="/anamneses" element={<ProtectedRoute element={<Anamneses />} />} />
-        <Route path="/produtos" element={<ProtectedRoute element={<ProductRoutes />} />} />
-        <Route path="/agenda" element={<ProtectedRoute element={<Planner />} />} />
-        <Route path="/pacientes/:id" element={<ProtectedRoute element={<Pacientes />} />} />
+        <Route
+          path="/anamneses"
+          element={<ProtectedRoute element={<Anamneses />} />}
+        />
+        <Route
+          path="/produtos"
+          element={<ProtectedRoute element={<ProductRoutes />} />}
+        />
+        <Route
+          path="/agenda"
+          element={<ProtectedRoute element={<Planner />} />}
+        />
+        <Route
+          path="/pacientes/:id"
+          element={<ProtectedRoute element={<Pacientes />} />}
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
