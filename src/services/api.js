@@ -1,18 +1,39 @@
 import axios from "axios";
-import { refreshAccessToken } from "../utils/auth"; // ✅ AJUSTADO AQUI
+import { refreshAccessToken } from "../utils/auth";
 
 const api = axios.create({
   baseURL: "https://death-star.onrender.com",
 });
 
-const initialToken = localStorage.getItem("authToken");
-if (initialToken) {
-  api.defaults.headers.common["Authorization"] = `Bearer ${initialToken}`;
-}
+export const isTokenExpired = (token) => {
+  if (!token) return true;
+
+  try {
+    const decoded = JSON.parse(atob(token.split(".")[1]));
+    const currentTime = Date.now() / 1000;
+    return decoded.exp < currentTime;
+  } catch (error) {
+    console.error("❌ Erro ao verificar expiração do token:", error);
+    return true;
+  }
+};
 
 export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
   api.interceptors.request.use(
-    (config) => {
+    async (config) => {
+      const token = localStorage.getItem("authToken");
+
+      if (!token || isTokenExpired(token)) {
+        console.warn(
+          "⛔ Token ausente ou expirado. Redirecionando para login."
+        );
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("refreshToken");
+        navigate("/login");
+        return Promise.reject(new Error("Token ausente ou expirado"));
+      }
+
+      config.headers["Authorization"] = `Bearer ${token}`;
       setLoading(true);
       return config;
     },
@@ -29,7 +50,6 @@ export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
     },
     async (error) => {
       setLoading(false);
-
       const originalRequest = error.config;
 
       if (
@@ -41,6 +61,7 @@ export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
         const newToken = await refreshAccessToken();
 
         if (newToken) {
+          localStorage.setItem("authToken", newToken);
           originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
           return api(originalRequest);
         }
@@ -64,19 +85,6 @@ export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
       return Promise.reject(error);
     }
   );
-};
-
-export const isTokenExpired = (token) => {
-  if (!token) return true;
-
-  try {
-    const decoded = JSON.parse(atob(token.split(".")[1]));
-    const currentTime = Date.now() / 1000;
-    return decoded.exp < currentTime;
-  } catch (error) {
-    console.error("❌ Erro ao verificar expiração do token:", error);
-    return true;
-  }
 };
 
 export default api;

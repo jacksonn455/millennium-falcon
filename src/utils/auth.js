@@ -13,24 +13,20 @@ const scheduleTokenRefresh = (accessToken, refreshToken) => {
   if (refreshTimeout) clearTimeout(refreshTimeout);
 
   try {
-    const accessDecoded = jwtDecode(accessToken);
     const refreshDecoded = jwtDecode(refreshToken);
-
     const currentTime = Date.now() / 1000;
-    const accessExpiresIn = accessDecoded.exp - currentTime;
     const refreshExpiresIn = refreshDecoded.exp - currentTime;
 
-    const accessBuffer = 60;
-    const refreshBuffer = 100;
+    const refreshBuffer = 300;
 
-    if (accessExpiresIn > accessBuffer) {
-      const refreshTime = (accessExpiresIn - accessBuffer) * 1000;
+    if (refreshExpiresIn > refreshBuffer) {
+      const refreshTime = (refreshExpiresIn - refreshBuffer) * 1000;
       refreshTimeout = setTimeout(refreshAccessToken, refreshTime);
     } else {
       refreshAccessToken();
     }
   } catch (error) {
-    console.error("❌ Erro ao decodificar token:", error);
+    console.error("❌ Erro ao decodificar refresh token:", error);
     clearTokens();
   }
 };
@@ -43,28 +39,18 @@ export const refreshAccessToken = async () => {
   }
 
   try {
-    const decoded = jwtDecode(refreshToken);
-    const currentTime = Date.now() / 1000;
-    const refreshExpiresIn = decoded.exp - currentTime;
-    const refreshBuffer = 100;
-
-    const payload = { refreshToken };
-    if (refreshExpiresIn > refreshBuffer) {
-      payload.skipRefreshRenewal = true;
-    }
-
-    const response = await api.post("/auth/refresh-token", payload);
+    const response = await api.post("/auth/refresh-token", { refreshToken });
     const { accessToken, refreshToken: newRefreshToken } = response.data;
 
     if (accessToken) {
       localStorage.setItem("authToken", accessToken);
       api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
     }
-    if (newRefreshToken && refreshExpiresIn <= refreshBuffer) {
+    if (newRefreshToken) {
       localStorage.setItem("refreshToken", newRefreshToken);
     }
 
-    scheduleTokenRefresh(accessToken, refreshToken);
+    scheduleTokenRefresh(accessToken, newRefreshToken || refreshToken);
     return accessToken;
   } catch (error) {
     console.error("❌ Erro ao renovar token:", error);
