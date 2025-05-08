@@ -433,10 +433,11 @@ function Planner() {
 
       <ConfirmDeleteModal
         isOpen={isDeleteModalOpen}
-        onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
       />
-      <Loader />
+
+      {loading && <Loader />}
     </AppContainer>
   );
 }
