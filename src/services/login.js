@@ -1,25 +1,16 @@
+import api from "./api";
+
 export const login = async ({ email, password }, navigate) => {
   try {
-    const response = await fetch("https://death-star.onrender.com/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    const response = await api.post("/auth/login", { email, password });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      alert(errorData.message || "Credenciais inválidas");
-      return null;
-    }
-
-    const { accessToken, refreshToken } = await response.json();
-
-    if (!accessToken || !refreshToken) {
+    if (!response.data.accessToken || !response.data.refreshToken) {
+      console.error("❌ Tokens não encontrados na resposta");
       alert("Erro inesperado. Por favor, tente novamente.");
       return null;
     }
+
+    const { accessToken, refreshToken } = response.data;
 
     localStorage.setItem("authToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
@@ -29,9 +20,18 @@ export const login = async ({ email, password }, navigate) => {
     return { accessToken, refreshToken };
   } catch (error) {
     console.error("❌ Erro ao tentar fazer login:", error);
-    alert(
-      "Erro ao tentar fazer login. Verifique sua conexão e tente novamente."
-    );
+    console.error("❌ Detalhes do erro:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      config: error.config
+    });
+    
+    if (error.response?.data?.message) {
+      alert(error.response.data.message);
+    } else {
+      alert("Erro ao tentar fazer login. Verifique sua conexão e tente novamente.");
+    }
     return null;
   }
 };

@@ -21,12 +21,28 @@ export const isTokenExpired = (token) => {
 export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
   api.interceptors.request.use(
     async (config) => {
+      // Não adicionar token para rotas de autenticação
+      const isAuthRoute = config.url?.includes('/auth/');
+      
+      if (isAuthRoute) {
+        setLoading(true);
+        return config;
+      }
+
       const token = localStorage.getItem("authToken");
 
       if (!token || isTokenExpired(token)) {
-        console.warn(
-          "⛔ Token ausente ou expirado. Redirecionando para login."
-        );
+        console.warn("⛔ Token ausente ou expirado. Tentando refresh...");
+        
+        // Tentar refresh antes de redirecionar
+        const newToken = await refreshAccessToken();
+        if (newToken) {
+          config.headers["Authorization"] = `Bearer ${newToken}`;
+          setLoading(true);
+          return config;
+        }
+        
+        // Se refresh falhou, redirecionar para login
         localStorage.removeItem("authToken");
         localStorage.removeItem("refreshToken");
         navigate("/login");
@@ -38,6 +54,7 @@ export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
       return config;
     },
     (error) => {
+      console.error("❌ Erro no interceptor de request:", error);
       setLoading(false);
       return Promise.reject(error);
     }
@@ -49,6 +66,7 @@ export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
       return response;
     },
     async (error) => {
+      console.error("❌ Erro na resposta:", error.config?.url, error.message);
       setLoading(false);
       const originalRequest = error.config;
 
@@ -58,24 +76,28 @@ export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
         !originalRequest._retry
       ) {
         originalRequest._retry = true;
+        console.log("🔄 Token expirado, tentando refresh...");
+        
         const newToken = await refreshAccessToken();
 
         if (newToken) {
+          console.log("✅ Token renovado, repetindo requisição...");
           localStorage.setItem("authToken", newToken);
           originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
           return api(originalRequest);
         }
 
+        // Se refresh falhou, redirecionar para login
+        console.log("❌ Refresh falhou, redirecionando para login...");
         localStorage.removeItem("authToken");
         localStorage.removeItem("refreshToken");
         navigate("/login");
       } else if (error.response) {
-        showError(
-          `⚠️ Erro (${error.response.status}): ${
-            error.response.data?.message ||
-            "Por favor, tente novamente mais tarde."
-          }`
-        );
+        const errorMessage = error.response.data?.message || 
+                           error.response.data?.error || 
+                           "Por favor, tente novamente mais tarde.";
+        
+        showError(`⚠️ Erro (${error.response.status}): ${errorMessage}`);
       } else {
         showError(
           "❌ Não foi possível conectar ao servidor. Verifique sua conexão de internet."

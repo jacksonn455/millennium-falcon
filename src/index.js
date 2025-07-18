@@ -15,6 +15,7 @@ import Header from "./components/Header";
 import ProductRoutes from "./routes/Products";
 import Anamneses from "./routes/Anamneses";
 import Planner from "./routes/Planner";
+import Sales from "./routes/Sales";
 import { login } from "./services/login";
 import ProtectedRoute from "./utils/auth";
 import { LoadingProvider, useLoading } from "./components/LoadingProvider";
@@ -24,7 +25,7 @@ import { ErrorProvider, useError } from "./components/ErrorProvider";
 import ErrorAlert from "./components/ErrorAlert";
 import NotFound from "./components/NotFound";
 import Pacientes from "./routes/Pacientes";
-import { refreshAccessToken } from "./utils/auth";
+import { refreshAccessToken, initializeAuth } from "./utils/auth";
 import { logout } from "./services/auth";
 
 const GlobalStyle = createGlobalStyle`
@@ -56,6 +57,8 @@ const App = () => {
 
   useEffect(() => {
     setAxiosLoadingInterceptor(setLoading, showError, navigate);
+    // Inicializar auth
+    initializeAuth();
   }, [setLoading, showError, navigate]);
 
   useEffect(() => {
@@ -141,6 +144,10 @@ const App = () => {
           element={<ProtectedRoute element={<Planner />} />}
         />
         <Route
+          path="/vendas"
+          element={<ProtectedRoute element={<Sales />} />}
+        />
+        <Route
           path="/pacientes/:id"
           element={<ProtectedRoute element={<Pacientes />} />}
         />
@@ -152,15 +159,13 @@ const App = () => {
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <BrowserRouter basename="/millennium-falcon">
-      <LoadingProvider>
-        <ErrorProvider>
-          <App />
-        </ErrorProvider>
-      </LoadingProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+  <BrowserRouter basename="/millennium-falcon">
+    <LoadingProvider>
+      <ErrorProvider>
+        <App />
+      </ErrorProvider>
+    </LoadingProvider>
+  </BrowserRouter>
 );
 
 reportWebVitals();

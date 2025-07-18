@@ -8,6 +8,7 @@ const menuItems = [
   { name: "ANAMNESES", icon: <ListIcon />, route: "/anamneses" },
   { name: "PRODUTOS", icon: <PackageIcon />, route: "/produtos" },
   { name: "AGENDA", icon: <ContactIcon />, route: "/agenda" },
+  { name: "VENDAS", icon: <PackageIcon />, route: "/vendas" },
 ];
 
 const Icons = styled.ul`
