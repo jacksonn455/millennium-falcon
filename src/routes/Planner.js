@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ModalAgendamento from "../components/Modal";
 import api from "../services/api";
 import { getAgendamentos } from "../services/planner";
@@ -44,9 +44,11 @@ function Planner() {
   const [totalPages, setTotalPages] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState(null);
+  const controllerRef = useRef(null);
 
   useEffect(() => {
     fetchAppointments(currentWeek);
+    // eslint-disable-next-line
   }, [currentWeek]);
 
   useEffect(() => {
@@ -57,20 +59,18 @@ function Planner() {
     }
   }, [searchTerm, appointments]);
 
-  let controller = null;
-
   const fetchAppointments = async (pageNumber = 1) => {
     setLoading(true);
 
-    if (controller) {
-      controller.abort();
+    // Cancelar requisição anterior se existir
+    if (controllerRef.current) {
+      controllerRef.current.abort();
     }
-    controller = new AbortController();
-    const signal = controller.signal;
+    controllerRef.current = new AbortController();
+    const signal = controllerRef.current.signal;
 
     try {
       const response = await getAgendamentos(pageNumber, { signal });
-
       if (response && response.data && response.pagination) {
         setAppointments(response.data);
         setFilteredAppointments(response.data);

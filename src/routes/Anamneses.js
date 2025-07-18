@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import FirstPage from "../pages/Anamnese/FirstPage";
 import SecondPage from "../pages/Anamnese/SecondPage";
@@ -7,6 +8,7 @@ import FourthPage from "../pages/Anamnese/FourthPage";
 import FifthPage from "../pages/Anamnese/FifthPage";
 
 const Anamneses = () => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [formData, setFormData] = useState({});
 
@@ -20,8 +22,14 @@ const Anamneses = () => {
           "Content-Type": "multipart/form-data",
         },
       });
+      
+      if (response.status === 200 || response.status === 201) {
+        alert("Anamnese enviada com sucesso!");
+        navigate("/");
+      }
     } catch (error) {
       console.error("Erro ao enviar dados:", error);
+      alert("Erro ao enviar anamnese. Tente novamente.");
     }
   };
 

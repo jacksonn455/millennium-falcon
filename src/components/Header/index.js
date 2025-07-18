@@ -31,15 +31,6 @@ const HeaderContainer = styled.header`
   }
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: inherit;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
 const MenuContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== 'isOpen',
 })`
@@ -117,9 +108,7 @@ function Header() {
 
   return (
     <HeaderContainer>
-      <StyledLink to="/">
-        <Logo />
-      </StyledLink>
+      <Logo />
       <HamburgerButton onClick={toggleMenu}>☰</HamburgerButton>
       <MenuContainer isOpen={isMenuOpen}>
         <MenuList>
