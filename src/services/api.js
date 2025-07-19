@@ -2,8 +2,8 @@ import axios from "axios";
 import { refreshAccessToken } from "../utils/auth";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000",
-  timeout: 10000, // 10 segundos de timeout
+  baseURL: "https://death-star.onrender.com",
+  timeout: 10000,
 });
 
 export const isTokenExpired = (token) => {
