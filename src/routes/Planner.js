@@ -25,6 +25,7 @@ import Loader from "../components/Loader";
 function Planner() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [service, setService] = useState("");
   const [paciente, setPaciente] = useState("");
   const [contact, setContact] = useState("");
@@ -136,12 +137,44 @@ function Planner() {
     setSearchTerm(e.target.value);
   };
 
+  const handleDateChange = (e) => {
+    const newDate = e.target.value;
+    setDate(newDate);
+  };
+
+  const handleTimeChange = (e) => {
+    const newTime = e.target.value;
+    setTime(newTime);
+    
+    // Se a hora inicial for maior ou igual à hora de término, ajustar
+    if (endTime && newTime >= endTime) {
+      const [hours, minutes] = newTime.split(':');
+      const endHours = parseInt(hours) + 1;
+      const newEndTime = `${endHours.toString().padStart(2, '0')}:${minutes}`;
+      setEndTime(newEndTime);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validação obrigatória dos campos
+    if (!date || !time || !endTime) {
+      showError("Todos os campos de data e hora são obrigatórios.");
+      return;
+    }
+
+    // Validação de hora de término
+    if (time >= endTime) {
+      showError("A hora de término deve ser posterior à hora inicial.");
+      return;
+    }
 
     const newAppointment = {
       date,
       time,
+      endDate: date, // Sempre a mesma data
+      endTime,
       paciente,
       service,
       contact,
@@ -190,12 +223,14 @@ function Planner() {
   const resetForm = () => {
     setDate("");
     setTime("");
+    setEndTime("");
     setPaciente("");
     setService("");
     setContact("");
     setNotes("");
     setResponsible("");
     setStatus("Pendente");
+    setEditingId(null);
   };
 
   const handleDelete = (id) => {
@@ -235,6 +270,7 @@ function Planner() {
   const handleEdit = (appointment) => {
     setDate(appointment.date);
     setTime(appointment.time);
+    setEndTime(appointment.endTime || "");
     setService(appointment.service);
     setPaciente(appointment.paciente);
     setContact(appointment.contact);
@@ -256,17 +292,27 @@ function Planner() {
             <AnamneseInput
               type="date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={handleDateChange}
               required
             />
           </div>
 
           <div>
-            <Label>Hora:</Label>
+            <Label>Hora Inicial:</Label>
             <AnamneseInput
               type="time"
               value={time}
-              onChange={(e) => setTime(e.target.value)}
+              onChange={handleTimeChange}
+              required
+            />
+          </div>
+
+          <div>
+            <Label>Hora de Término:</Label>
+            <AnamneseInput
+              type="time"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
               required
             />
           </div>
@@ -384,7 +430,10 @@ function Planner() {
                     <strong>Data:</strong> {appointment.date}
                   </p>
                   <p>
-                    <strong>Hora:</strong> {appointment.time}
+                    <strong>Hora Inicial:</strong> {appointment.time}
+                  </p>
+                  <p>
+                    <strong>Hora de Término:</strong> {appointment.endTime}
                   </p>
                   <p>
                     <strong>Tipo de Serviço:</strong> {appointment.service}
