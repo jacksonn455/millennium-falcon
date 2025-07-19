@@ -11,7 +11,6 @@ async function getAgendamentos(pageNumber) {
   }
 }
 
-
 async function createAgendamento(data) {
   try {
     const response = await api.post("/agenda", data);
@@ -22,4 +21,14 @@ async function createAgendamento(data) {
   }
 }
 
-export { getAgendamentos, createAgendamento };
+async function updateAgendamento(id, data) {
+  try {
+    const response = await api.put(`/agenda/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao atualizar agendamento:", error);
+    return null;
+  }
+}
+
+export { getAgendamentos, createAgendamento, updateAgendamento };

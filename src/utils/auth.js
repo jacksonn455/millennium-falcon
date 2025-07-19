@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import api from "../services/api";
 
 let refreshTimeout = null;
+let isRefreshing = false;
 
 const clearTokens = () => {
   localStorage.removeItem("authToken");
@@ -21,9 +22,15 @@ const scheduleTokenRefresh = (accessToken, refreshToken) => {
 
     if (refreshExpiresIn > refreshBuffer) {
       const refreshTime = (refreshExpiresIn - refreshBuffer) * 1000;
-      refreshTimeout = setTimeout(() => refreshAccessToken(), refreshTime);
+      refreshTimeout = setTimeout(() => {
+        if (!isRefreshing) {
+          refreshAccessToken();
+        }
+      }, refreshTime);
     } else {
-      refreshAccessToken();
+      if (!isRefreshing) {
+        refreshAccessToken();
+      }
     }
   } catch (error) {
     console.error("❌ Erro ao decodificar refresh token:", error);
@@ -32,19 +39,29 @@ const scheduleTokenRefresh = (accessToken, refreshToken) => {
 };
 
 export const refreshAccessToken = async () => {
+  if (isRefreshing) {
+    console.log("🔄 Refresh já em andamento, aguardando...");
+    return null;
+  }
+
+  isRefreshing = true;
   const refreshToken = localStorage.getItem("refreshToken");
+  
   if (!refreshToken) {
     clearTokens();
+    isRefreshing = false;
     return null;
   }
 
   try {
+    console.log("🔄 Iniciando refresh do token...");
     const response = await api.post("/auth/refresh-token", { refreshToken });
     const { accessToken, refreshToken: newRefreshToken } = response.data;
 
     if (accessToken) {
       localStorage.setItem("authToken", accessToken);
       api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+      console.log("✅ Token renovado com sucesso");
     }
     
     if (newRefreshToken) {
@@ -53,6 +70,7 @@ export const refreshAccessToken = async () => {
 
     // Agendar próximo refresh
     scheduleTokenRefresh(accessToken, newRefreshToken || refreshToken);
+    isRefreshing = false;
     return accessToken;
   } catch (error) {
     console.error("❌ Erro ao renovar token:", error.response?.data || error.message);
@@ -61,6 +79,7 @@ export const refreshAccessToken = async () => {
     if (error.response?.status === 401) {
       clearTokens();
     }
+    isRefreshing = false;
     return null;
   }
 };
@@ -79,7 +98,9 @@ export const initializeAuth = () => {
         api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
         scheduleTokenRefresh(accessToken, refreshToken);
       } else {
-        refreshAccessToken();
+        if (!isRefreshing) {
+          refreshAccessToken();
+        }
       }
     } catch (error) {
       console.error("❌ Erro ao decodificar token:", error);

@@ -27,6 +27,7 @@ import NotFound from "./components/NotFound";
 import Pacientes from "./routes/Pacientes";
 import { refreshAccessToken, initializeAuth } from "./utils/auth";
 import { logout } from "./services/auth";
+import ConnectionMonitor from "./components/ConnectionMonitor";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -50,6 +51,7 @@ const GlobalStyle = createGlobalStyle`
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { setLoading } = useLoading();
@@ -63,32 +65,39 @@ const App = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const authToken = localStorage.getItem("authToken");
-      const refreshToken = localStorage.getItem("refreshToken");
+      try {
+        const authToken = localStorage.getItem("authToken");
+        const refreshToken = localStorage.getItem("refreshToken");
 
-      if (!authToken || !refreshToken) {
-        handleLogout();
-        return;
-      }
-
-      const isAuthTokenExpired = isTokenExpired(authToken);
-      const isRefreshTokenExpired = isTokenExpired(refreshToken);
-
-      if (isRefreshTokenExpired) {
-        handleLogout();
-        return;
-      }
-
-      if (isAuthTokenExpired) {
-        const newToken = await refreshAccessToken();
-        if (newToken) {
-          localStorage.setItem("authToken", newToken);
-          setIsLoggedIn(true);
-        } else {
+        if (!authToken || !refreshToken) {
           handleLogout();
+          return;
         }
-      } else {
-        setIsLoggedIn(true);
+
+        const isAuthTokenExpired = isTokenExpired(authToken);
+        const isRefreshTokenExpired = isTokenExpired(refreshToken);
+
+        if (isRefreshTokenExpired) {
+          handleLogout();
+          return;
+        }
+
+        if (isAuthTokenExpired) {
+          const newToken = await refreshAccessToken();
+          if (newToken) {
+            localStorage.setItem("authToken", newToken);
+            setIsLoggedIn(true);
+          } else {
+            handleLogout();
+          }
+        } else {
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        console.error("❌ Erro ao verificar autenticação:", error);
+        handleLogout();
+      } finally {
+        setIsInitialized(true);
       }
     };
 
@@ -122,9 +131,20 @@ const App = () => {
     setIsLoggedIn(false);
   };
 
+  // Aguardar inicialização antes de renderizar
+  if (!isInitialized) {
+    return (
+      <div>
+        <GlobalStyle />
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div>
       <GlobalStyle />
+      <ConnectionMonitor />
       {location.pathname !== "/login" && <Header handleLogout={handleLogout} />}
       <Loader />
       <ErrorAlert />
