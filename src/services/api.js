@@ -3,6 +3,7 @@ import { refreshAccessToken } from "../utils/auth";
 
 const api = axios.create({
   baseURL: "https://death-star.onrender.com",
+  timeout: 10000,
 });
 
 export const isTokenExpired = (token) => {
@@ -19,6 +20,21 @@ export const isTokenExpired = (token) => {
 };
 
 export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
+  // Flag para evitar múltiplas tentativas de refresh
+  let isRefreshing = false;
+  let failedQueue = [];
+
+  const processQueue = (error, token = null) => {
+    failedQueue.forEach(({ resolve, reject }) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(token);
+      }
+    });
+    failedQueue = [];
+  };
+
   api.interceptors.request.use(
     async (config) => {
       // Não adicionar token para rotas de autenticação
@@ -34,19 +50,44 @@ export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
       if (!token || isTokenExpired(token)) {
         console.warn("⛔ Token ausente ou expirado. Tentando refresh...");
         
-        // Tentar refresh antes de redirecionar
-        const newToken = await refreshAccessToken();
-        if (newToken) {
-          config.headers["Authorization"] = `Bearer ${newToken}`;
-          setLoading(true);
-          return config;
+        // Se já está tentando refresh, adicionar à fila
+        if (isRefreshing) {
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          }).then(token => {
+            config.headers["Authorization"] = `Bearer ${token}`;
+            setLoading(true);
+            return config;
+          }).catch(err => {
+            return Promise.reject(err);
+          });
         }
+
+        isRefreshing = true;
         
-        // Se refresh falhou, redirecionar para login
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("refreshToken");
-        navigate("/login");
-        return Promise.reject(new Error("Token ausente ou expirado"));
+        try {
+          const newToken = await refreshAccessToken();
+          if (newToken) {
+            config.headers["Authorization"] = `Bearer ${newToken}`;
+            processQueue(null, newToken);
+            setLoading(true);
+            return config;
+          } else {
+            processQueue(new Error("Refresh falhou"));
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("refreshToken");
+            navigate("/login");
+            return Promise.reject(new Error("Token ausente ou expirado"));
+          }
+        } catch (error) {
+          processQueue(error);
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("refreshToken");
+          navigate("/login");
+          return Promise.reject(error);
+        } finally {
+          isRefreshing = false;
+        }
       }
 
       config.headers["Authorization"] = `Bearer ${token}`;
@@ -70,28 +111,65 @@ export const setAxiosLoadingInterceptor = (setLoading, showError, navigate) => {
       setLoading(false);
       const originalRequest = error.config;
 
+      // Retry para erros de rede (sem resposta do servidor)
+      if (!error.response && !originalRequest._retry && originalRequest.url && !originalRequest.url.includes('/auth/')) {
+        originalRequest._retry = true;
+        console.log("🔄 Tentando novamente devido a erro de rede...");
+        
+        // Aguardar 1 segundo antes de tentar novamente
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        return api(originalRequest);
+      }
+
       if (
         error.response &&
         error.response.status === 401 &&
-        !originalRequest._retry
+        !originalRequest._retry &&
+        !originalRequest.url?.includes('/auth/')
       ) {
         originalRequest._retry = true;
         console.log("🔄 Token expirado, tentando refresh...");
         
-        const newToken = await refreshAccessToken();
-
-        if (newToken) {
-          console.log("✅ Token renovado, repetindo requisição...");
-          localStorage.setItem("authToken", newToken);
-          originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
-          return api(originalRequest);
+        if (isRefreshing) {
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          }).then(token => {
+            originalRequest.headers["Authorization"] = `Bearer ${token}`;
+            return api(originalRequest);
+          }).catch(err => {
+            return Promise.reject(err);
+          });
         }
 
-        // Se refresh falhou, redirecionar para login
-        console.log("❌ Refresh falhou, redirecionando para login...");
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("refreshToken");
-        navigate("/login");
+        isRefreshing = true;
+        
+        try {
+          const newToken = await refreshAccessToken();
+          if (newToken) {
+            console.log("✅ Token renovado, repetindo requisição...");
+            localStorage.setItem("authToken", newToken);
+            originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+            processQueue(null, newToken);
+            return api(originalRequest);
+          } else {
+            processQueue(new Error("Refresh falhou"));
+            console.log("❌ Refresh falhou, redirecionando para login...");
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("refreshToken");
+            navigate("/login");
+            return Promise.reject(error);
+          }
+        } catch (refreshError) {
+          processQueue(refreshError);
+          console.log("❌ Erro no refresh, redirecionando para login...");
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("refreshToken");
+          navigate("/login");
+          return Promise.reject(error);
+        } finally {
+          isRefreshing = false;
+        }
       } else if (error.response) {
         const errorMessage = error.response.data?.message || 
                            error.response.data?.error || 
