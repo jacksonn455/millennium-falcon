@@ -16,6 +16,7 @@ import ProductRoutes from "./routes/Products";
 import Anamneses from "./routes/Anamneses";
 import Planner from "./routes/Planner";
 import Sales from "./routes/Sales";
+import Services from "./routes/Services";
 import { login } from "./services/login";
 import ProtectedRoute from "./utils/auth";
 import { LoadingProvider, useLoading } from "./components/LoadingProvider";
@@ -166,6 +167,10 @@ const App = () => {
         <Route
           path="/vendas"
           element={<ProtectedRoute element={<Sales />} />}
+        />
+        <Route
+          path="/servicos"
+          element={<ProtectedRoute element={<Services />} />}
         />
         <Route
           path="/pacientes/:id"

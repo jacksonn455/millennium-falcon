@@ -57,6 +57,47 @@ const SectionTitle = styled.h2`
   font-weight: bold;
 `;
 
+const NavigationButton = styled.button`
+  background: linear-gradient(45deg, #a8235e, #c7628f);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  margin: 0 10px;
+
+  &:hover {
+    background: linear-gradient(45deg, #8b1e4d, #a8235e);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px 20px;
+    font-size: 14px;
+    margin: 0 5px;
+  }
+`;
+
+const NavigationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  gap: 10px;
+`;
+
 const AtendimentoCard = styled.div`
   background-color: #f9f9f9;
   border-radius: 10px;
@@ -239,22 +280,22 @@ function UsersActive() {
             ))}
           </CarouselContainer>
           {totalPagesAtendimentos > 1 && (
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <button
+            <NavigationContainer>
+              <NavigationButton
                 onClick={goToPreviousPageAtendimentos}
                 disabled={currentPageAtendimentos === 0}
               >
-                Anterior
-              </button>
-              <button
+                ← Anterior
+              </NavigationButton>
+              <NavigationButton
                 onClick={goToNextPageAtendimentos}
                 disabled={
                   currentPageAtendimentos === totalPagesAtendimentos - 1
                 }
               >
-                Próximo
-              </button>
-            </div>
+                Próximo →
+              </NavigationButton>
+            </NavigationContainer>
           )}
         </>
       ) : (
@@ -286,20 +327,20 @@ function UsersActive() {
               </CarouselItem>
             ))}
           </CarouselContainer>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <button
+          <NavigationContainer>
+            <NavigationButton
               onClick={goToPreviousPageProdutos}
               disabled={currentPageProdutos === 0}
             >
-              Anterior
-            </button>
-            <button
+              ← Anterior
+            </NavigationButton>
+            <NavigationButton
               onClick={goToNextPageProdutos}
               disabled={currentPageProdutos === totalPagesProdutos - 1}
             >
-              Próximo
-            </button>
-          </div>
+              Próximo →
+            </NavigationButton>
+          </NavigationContainer>
         </CardContainer>
       ) : (
         <NoProdutosMessage>
